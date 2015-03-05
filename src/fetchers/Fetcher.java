@@ -14,7 +14,7 @@ import articles.Article;
 
 public abstract class Fetcher {
 	protected String baseURL;
-
+	
 	/**
 	 * Asynchronously populates all fields on the articles in the given
 	 * {@code set} by calling the {@link articles.Article#populateData()} method

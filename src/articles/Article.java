@@ -14,6 +14,11 @@ public abstract class Article {
 	protected String fullText;
 	protected String fullTextHTML;
 
+	/**
+	 * Constructs an Article object, setting the {@code url} and {@code title} properties.
+	 * @param url the url of the article
+	 * @param title the title (headline) of the article
+	 */
 	public Article(String url, String title) {
 		this.url = url;
 		this.title = title;

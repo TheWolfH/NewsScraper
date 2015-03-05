@@ -1,4 +1,5 @@
 package articles;
+
 import java.io.IOException;
 import java.util.Date;
 
@@ -23,7 +24,7 @@ public class ZeitArticle extends Article {
 	public void populateData() throws IOException {
 		Document doc = Jsoup.connect(this.url).timeout(60000).get();
 		Element articleBody = doc.select(".article-body").first();
-		
+
 		this.fullText = articleBody.text();
 		this.fullTextHTML = articleBody.html();
 	}

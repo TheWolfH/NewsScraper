@@ -10,10 +10,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class GuardianArticle extends Article {
 	protected Fields fields;
-	
+
 	@JsonCreator
-	public GuardianArticle(@JsonProperty("webUrl") String url, @JsonProperty("webTitle") String title,
-			@JsonProperty("webPublicationDate") Date publicationDate, @JsonProperty("fields") Fields fields) {
+	public GuardianArticle(@JsonProperty("webUrl") String url,
+			@JsonProperty("webTitle") String title,
+			@JsonProperty("webPublicationDate") Date publicationDate,
+			@JsonProperty("fields") Fields fields) {
 		super(url, title);
 		this.fields = fields;
 		this.publicationDate = publicationDate;
@@ -25,11 +27,11 @@ public class GuardianArticle extends Article {
 			this.subtitle = this.fields.subtitle;
 			this.fullTextHTML = this.fields.fullTextHTML;
 			this.fullText = Jsoup.parse(this.fullTextHTML).text();
-			
+
 			this.fields = null;
 		}
 	}
-	
+
 	public static class Fields {
 		@JsonProperty("trailText")
 		protected String subtitle;

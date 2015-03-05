@@ -17,7 +17,7 @@ import articles.*;
 public abstract class ApiFetcher extends Fetcher {
 	protected String apiKey;
 
-	/** TODO handle limit and offset, mention in javadoc
+	/** TODO handle numberPerPage, mention in javadoc
 	 * Template method returning a {@link java.util.Set} of
 	 * {@link articles.Article} objects representing articles that contain one
 	 * or more of the strings in {@code keywords} and that were published on or
