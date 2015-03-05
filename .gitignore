@@ -1,0 +1,20 @@
+# Generated files
+/bin
+*.class
+
+# Doc files
+/doc
+
+# Temp files
+/tmp
+*.tmp
+
+# Eclipse specific
+.settings/
+*.launch
+
+# ObjectAid UML class diagram files
+*.ucls
+
+# Secret ApiKeys
+/src/helpers/Api.java
