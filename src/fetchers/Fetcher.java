@@ -12,9 +12,35 @@ import java.util.concurrent.TimeUnit;
 
 import articles.Article;
 
+/**
+ * Abstract base class for all fetcher classes. Entry point is the
+ * {@link #searchArticles(String[], Date, Date)} method, which performs the
+ * action of actually searching for articles by keywords and the given time
+ * frame. In order to implement a new news provider, one of the direct
+ * subclasses of this class must be extended, implementing at least all abstract
+ * methods provided. The exact methods to be implemented vary on whether the
+ * provider's articles are accessed via a dedicated API (ApiFetcher) or by
+ * leveraging the site's common search functionality (Scraper). The provided
+ * {@link #populateArticleData(Set)} is leveraged by the
+ * {@code searchArticles(...)} methods pre-defined in the direct subclasses, but
+ * can also be used when implementing your own version of
+ * {@link #searchArticles(String[], Date, Date)}.
+ * 
+ * @author Jan Helge Wolf
+ * 
+ */
 public abstract class Fetcher {
+	/**
+	 * The constant part of the url leading to the search functionality on the
+	 * website of the news provider. Must be set in the constructor of the
+	 * respective subclass and should contain all constant parts of the url,
+	 * including the protocol, hostname, path, and all constant query parts
+	 * (e.g. ordering, filters in order to search for only one publication of
+	 * this publisher etc.). {@link #getSearchURL(String, Date, Date, int, int)}
+	 * should use this property as the basis for the complete search url.
+	 */
 	protected String baseURL;
-	
+
 	/**
 	 * Asynchronously populates all fields on the articles in the given
 	 * {@code set} by calling the {@link articles.Article#populateData()} method
@@ -93,7 +119,7 @@ public abstract class Fetcher {
 	 * returns the http(s) query address that needs to be called to obtain at
 	 * least the url and the title of the articles number {@code offset} to
 	 * {@code offset+limit} (in a zero-based counting) which contain the
-	 * {@code keyword} and where published between {@code fromDate} and
+	 * {@code keyword} and were published between {@code fromDate} and
 	 * {@code toDate}.
 	 * 
 	 * @param keyword

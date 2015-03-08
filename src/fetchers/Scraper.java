@@ -1,6 +1,7 @@
 package fetchers;
 
 import java.io.IOException;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,15 +13,21 @@ import org.jsoup.select.Elements;
 
 import articles.Article;
 
+/**
+ * Base class for all fetcher classes that obtain their results by scraping the
+ * search page of the respective news provider's website. By implementing (at
+ * least) all abstract methods provided by this class and the {@link Fetcher}
+ * class, users can implement the search for an arbitrary news provider.
+ * 
+ * @author Jan Helge Wolf
+ * 
+ */
 public abstract class Scraper extends Fetcher {
-	protected Document searchResult;
-
 	/**
-	 * TODO handle numberPerPage, mention in javadoc Template method returning a
-	 * {@link java.util.Set} of {@link articles.Article} objects representing
-	 * articles that contain one or more of the strings in {@code keywords} and
-	 * that were published on or after {@code fromDate} and on or before
-	 * {@code toDate}. This method uses
+	 * Template method returning a {@link java.util.Set} of
+	 * {@link articles.Article} objects representing articles that contain one
+	 * or more of the strings in {@code keywords} and that were published on or
+	 * after {@code fromDate} and on or before {@code toDate}. This method uses
 	 * {@link #getSearchURL(String, Date, Date, int, int)} to iterate over the
 	 * pagination of the search function of the scraped news site, calls the
 	 * returned url and retrieves all search results using the selector provided
@@ -43,7 +50,7 @@ public abstract class Scraper extends Fetcher {
 	 *            found by the returned query
 	 * @param articlesPerPage
 	 *            the number of articles per search page
-	 * @return
+	 * @return the articles matching the conditions above
 	 */
 	protected Set<Article> searchArticles(String[] keywords, Date fromDate, Date toDate,
 			int articlesPerPage) {
@@ -66,8 +73,8 @@ public abstract class Scraper extends Fetcher {
 
 					// Parse HTML content
 					String searchUrl = this.getSearchURL(keyword, fromDate, toDate, offset, limit);
-					this.searchResult = Jsoup.connect(searchUrl).timeout(60000).get();
-					articleElements = this.searchResult.select(this.getSearchResultsSelector());
+					Document searchResult = Jsoup.connect(searchUrl).timeout(60000).get();
+					articleElements = searchResult.select(this.getSearchResultsSelector());
 
 					// Exit loop when no more articles are found
 					if (articleElements.size() < 1) {

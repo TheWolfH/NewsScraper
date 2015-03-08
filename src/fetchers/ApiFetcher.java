@@ -14,14 +14,38 @@ import com.fasterxml.jackson.databind.ObjectReader;
 
 import articles.*;
 
+/**
+ * Base class for all fetcher classes that obtain their results by the usage of
+ * a dedicated API. By implementing (at least) all abstract methods provided by
+ * this class and the {@link Fetcher} class, users can implement the search for
+ * an arbitrary news provider. This class not only lays out the methods needed
+ * in order to implement your own news provider, but provides rich pre-defined
+ * functionality, namely the
+ * {@link #searchArticles(String[], Date, Date, Class, String)} method, which in
+ * most cases can simply be called with the appropriate parameters by
+ * subclasses. However, in case the default functionality needs to be
+ * customized, the {@link Fetcher#searchArticles(String[], Date, Date)} method
+ * can also be implemented independently.
+ * 
+ * @author Jan Helge Wolf
+ * 
+ */
 public abstract class ApiFetcher extends Fetcher {
+	/**
+	 * The API key needed to access the respective API. Should be set in the
+	 * constructor of the respective subclass and should be part of
+	 * {@link Fetcher#baseURL}, which is used by
+	 * {@link Fetcher#getSearchURL(String, Date, Date, int, int)} to build the
+	 * search url.
+	 */
 	protected String apiKey;
 
-	/** TODO handle numberPerPage, mention in javadoc
-	 * Template method returning a {@link java.util.Set} of
-	 * {@link articles.Article} objects representing articles that contain one
-	 * or more of the strings in {@code keywords} and that were published on or
-	 * after {@code fromDate} and on or before {@code toDate}.
+	/**
+	 * TODO handle numberPerPage, mention in javadoc Template method returning a
+	 * {@link java.util.Set} of {@link articles.Article} objects representing
+	 * articles that contain one or more of the strings in {@code keywords} and
+	 * that were published on or after {@code fromDate} and on or before
+	 * {@code toDate}.
 	 * 
 	 * 
 	 * @param keywords

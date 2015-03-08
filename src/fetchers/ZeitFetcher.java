@@ -12,7 +12,7 @@ public class ZeitFetcher extends ApiFetcher {
 
 	public ZeitFetcher() {
 		this.apiKey = helpers.Api.ZEIT.getKey();
-		this.baseURL = "http://api.zeit.de/content?api_key=" + this.apiKey;
+		this.baseURL = "http://api.zeit.de/content?api_key=" + this.apiKey + "&sort=release_date desc";
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class ZeitFetcher extends ApiFetcher {
 
 		sb.append("&limit=");
 		sb.append(limit);
-		System.out.println(sb.toString());
+
 		return sb.toString();
 	}
 
