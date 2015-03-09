@@ -14,5 +14,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/janhe_000/Downloads/jackson-core-2.5.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/janhe_000/Downloads/sqlite-jdbc-3.8.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

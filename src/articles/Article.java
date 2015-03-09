@@ -2,6 +2,7 @@ package articles;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.*;
 
@@ -13,11 +14,16 @@ public abstract class Article {
 	protected Date publicationDate;
 	protected String fullText;
 	protected String fullTextHTML;
+	protected Set<String> keywords;
 
 	/**
-	 * Constructs an Article object, setting the {@code url} and {@code title} properties.
-	 * @param url the url of the article
-	 * @param title the title (headline) of the article
+	 * Constructs an Article object, setting the {@code url} and {@code title}
+	 * properties.
+	 * 
+	 * @param url
+	 *            the url of the article
+	 * @param title
+	 *            the title (headline) of the article
 	 */
 	public Article(String url, String title) {
 		this.url = url;
@@ -114,4 +120,10 @@ public abstract class Article {
 		return this.fullTextHTML;
 	}
 
+	/**
+	 * @return the keywords
+	 */
+	public Set<String> getKeywords() {
+		return this.keywords;
+	}
 }

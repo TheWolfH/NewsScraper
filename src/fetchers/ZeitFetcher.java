@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 
+import exporters.Exporter;
 import results.ZeitResult;
 import articles.*;
 
@@ -61,9 +62,11 @@ public class ZeitFetcher extends ApiFetcher {
 		Set<Article> articles = fetcher
 				.searchArticles(new String[] { "Snowden" }, fromDate, toDate);
 
-		for (Article article : articles) {
+		/*for (Article article : articles) {
 			System.out.println(article.getFullText().substring(0, 100));
-		}
+		}*/
+		
+		Exporter exporter = new Exporter(articles);
 
 		System.out.println(articles.size());
 		Date end = new Date();
