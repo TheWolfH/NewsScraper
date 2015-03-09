@@ -3,7 +3,7 @@ package fetchers;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Set;
+import java.util.Map;
 
 import exporters.Exporter;
 import results.ZeitResult;
@@ -13,11 +13,12 @@ public class ZeitFetcher extends ApiFetcher {
 
 	public ZeitFetcher() {
 		this.apiKey = helpers.Api.ZEIT.getKey();
-		this.baseURL = "http://api.zeit.de/content?api_key=" + this.apiKey + "&sort=release_date desc";
+		this.baseURL = "http://api.zeit.de/content?api_key=" + this.apiKey
+				+ "&sort=release_date desc";
 	}
 
 	@Override
-	public Set<Article> searchArticles(String[] keywords, Date fromDate, Date toDate) {
+	public Map<String, Article> searchArticles(String[] keywords, Date fromDate, Date toDate) {
 		return super.searchArticles(keywords, fromDate, toDate, ZeitResult.class);
 	}
 
@@ -28,7 +29,7 @@ public class ZeitFetcher extends ApiFetcher {
 
 		sb.append("&q=");
 		sb.append(keyword);
-		
+
 		sb.append(" AND release_date:[");
 		sb.append(formatter.format(fromDate));
 		sb.append(" TO ");
@@ -59,13 +60,14 @@ public class ZeitFetcher extends ApiFetcher {
 		}
 
 		ZeitFetcher fetcher = new ZeitFetcher();
-		Set<Article> articles = fetcher
-				.searchArticles(new String[] { "Snowden" }, fromDate, toDate);
+		Map<String, Article> articles = fetcher.searchArticles(new String[] { "Snowden" },
+				fromDate, toDate);
 
-		/*for (Article article : articles) {
-			System.out.println(article.getFullText().substring(0, 100));
-		}*/
-		
+		/*
+		 * for (Article article : articles) {
+		 * System.out.println(article.getFullText().substring(0, 100)); }
+		 */
+
 		Exporter exporter = new Exporter(articles);
 
 		System.out.println(articles.size());

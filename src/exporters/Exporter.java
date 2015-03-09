@@ -7,12 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.util.Set;
+import java.util.Map;
 
 import articles.Article;
 
 public class Exporter {
-	public Exporter(Set<Article> articles) {
+	public Exporter(Map<String, Article> articles) {
 		try {
 			Connection con = DriverManager.getConnection("jdbc:sqlite:database.db");
 			con.setAutoCommit(false);
@@ -45,7 +45,7 @@ public class Exporter {
 
 	}
 
-	public void readArticles(Connection con, Set<Article> articles) throws SQLException {
+	public void readArticles(Connection con, Map<String, Article> articles) throws SQLException {
 		PreparedStatement insertArticle = con.prepareStatement("INSERT INTO articles "
 				+ "(url, title, subtitle, publicationDate, fullText, fullTextHTML) "
 				+ "VALUES (?, ?, ?, datetime(?), ?, ?)", Statement.RETURN_GENERATED_KEYS);
@@ -57,7 +57,7 @@ public class Exporter {
 		int affectedRows = 0;
 		long articleId = 0;
 
-		for (Article article : articles) {
+		for (Article article : articles.values()) {
 			insertArticle.setString(1, article.getUrl());
 			insertArticle.setString(2, article.getTitle());
 			insertArticle.setString(3, article.getSubtitle());
@@ -90,7 +90,7 @@ public class Exporter {
 					insertArticleKeyword.executeUpdate();
 				}
 			}
-			
+
 			con.commit();
 		}
 	}

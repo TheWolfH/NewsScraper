@@ -2,6 +2,7 @@ package fetchers;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -46,17 +47,17 @@ public abstract class Fetcher {
 	 * {@code set} by calling the {@link articles.Article#populateData()} method
 	 * on each article.
 	 * 
-	 * @param set
+	 * @param articles
 	 *            the set of articles to be populated
 	 */
-	protected void populateArticleData(Set<Article> set) {
+	protected void populateArticleData(Map<String, Article> articles) {
 		// ExecutorService to asynchronously get article fullTexts
 		ExecutorService fullTextFetcher = Executors.newFixedThreadPool(8);
 		Set<Future<Void>> futures = new HashSet<Future<Void>>();
 
 		// Iterate over all articles found and asynchronously populate fullText
 		// fields
-		for (final Article article : set) {
+		for (final Article article : articles.values()) {
 			Future<Void> future = fullTextFetcher.submit(new Callable<Void>() {
 				@Override
 				public Void call() throws Exception {
@@ -111,7 +112,8 @@ public abstract class Fetcher {
 	 * @return a Set of {@link articles.Article} objects representing newspaper
 	 *         articles
 	 */
-	public abstract Set<Article> searchArticles(String[] keywords, Date fromDate, Date toDate);
+	public abstract Map<String, Article> searchArticles(String[] keywords, Date fromDate,
+			Date toDate);
 
 	/**
 	 * Helper method used by {@link #searchArticles(String[], Date, Date)} to

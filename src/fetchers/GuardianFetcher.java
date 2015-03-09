@@ -3,6 +3,7 @@ package fetchers;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 import exporters.Exporter;
@@ -19,14 +20,14 @@ public class GuardianFetcher extends ApiFetcher {
 	@Override
 	protected String getSearchURL(String keyword, Date fromDate, Date toDate, int offset, int limit) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-		StringBuilder sb = new StringBuilder(this.baseURL);	
+		StringBuilder sb = new StringBuilder(this.baseURL);
 
 		sb.append("&q=");
 		sb.append(keyword);
-		
+
 		sb.append("&from-date=");
 		sb.append(formatter.format(fromDate));
-		
+
 		sb.append("&to-date=");
 		sb.append(formatter.format(toDate));
 
@@ -43,7 +44,7 @@ public class GuardianFetcher extends ApiFetcher {
 	}
 
 	@Override
-	public Set<Article> searchArticles(String[] keywords, Date fromDate, Date toDate) {
+	public Map<String, Article> searchArticles(String[] keywords, Date fromDate, Date toDate) {
 		return super.searchArticles(keywords, fromDate, toDate, GuardianResult.class, "response");
 	}
 
@@ -62,13 +63,14 @@ public class GuardianFetcher extends ApiFetcher {
 		}
 
 		GuardianFetcher fetcher = new GuardianFetcher();
-		Set<Article> articles = fetcher
-				.searchArticles(new String[] { "Snowden" }, fromDate, toDate);
+		Map<String, Article> articles = fetcher.searchArticles(new String[] { "Snowden" },
+				fromDate, toDate);
 
-		/*for (Article article : articles) {
-			System.out.println(article.getFullText().substring(0, 100));
-		}*/
-		
+		/*
+		 * for (Article article : articles) {
+		 * System.out.println(article.getFullText().substring(0, 100)); }
+		 */
+
 		Exporter exporter = new Exporter(articles);
 
 		System.out.println(articles.size());

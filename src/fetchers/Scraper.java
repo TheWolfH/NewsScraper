@@ -1,10 +1,9 @@
 package fetchers;
 
 import java.io.IOException;
-
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -52,10 +51,10 @@ public abstract class Scraper extends Fetcher {
 	 *            the number of articles per search page
 	 * @return the articles matching the conditions above
 	 */
-	protected Set<Article> searchArticles(String[] keywords, Date fromDate, Date toDate,
+	protected Map<String, Article> searchArticles(String[] keywords, Date fromDate, Date toDate,
 			int articlesPerPage) {
 		// Article set to be returned
-		Set<Article> set = new HashSet<Article>();
+		Map<String, Article> articles = new HashMap<String, Article>();
 
 		for (String keyword : keywords) {
 			// Set limit and offset for pagination, initialize articleElements
@@ -87,7 +86,7 @@ public abstract class Scraper extends Fetcher {
 						String url = this.getUrlFromSearchResult(articleElement);
 						String title = this.getTitleFromSearchResult(articleElement);
 
-						set.add(this.createArticleFromUrlAndTitle(url, title));
+						articles.put(url, this.createArticleFromUrlAndTitle(url, title));
 					}
 
 					// Exit loop if less than limit articles were found (end of
@@ -105,9 +104,9 @@ public abstract class Scraper extends Fetcher {
 			} while (true);
 		}
 
-		this.populateArticleData(set);
+		this.populateArticleData(articles);
 
-		return set;
+		return articles;
 	}
 
 	/**

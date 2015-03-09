@@ -55,29 +55,6 @@ public abstract class Article {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Article other = (Article) obj;
-		if (url == null) {
-			if (other.url != null)
-				return false;
-		}
-		else if (!url.equals(other.url))
-			return false;
-		return true;
-	}
-
 	/**
 	 * @return the url
 	 */

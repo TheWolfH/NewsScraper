@@ -3,7 +3,7 @@ package fetchers;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Set;
+import java.util.Map;
 
 import articles.Article;
 import articles.TelegraphArticle;
@@ -15,7 +15,7 @@ public class TelegraphScraper extends Scraper {
 	}
 
 	@Override
-	public Set<Article> searchArticles(String[] keywords, Date fromDate, Date toDate) {
+	public Map<String, Article> searchArticles(String[] keywords, Date fromDate, Date toDate) {
 		return super.searchArticles(keywords, fromDate, toDate, 20);
 	}
 

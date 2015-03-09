@@ -4,8 +4,8 @@ import helpers.ConnectionHelper;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import results.ApiResult;
 
@@ -55,10 +55,10 @@ public abstract class ApiFetcher extends Fetcher {
 	 * @param rootElement
 	 * @return
 	 */
-	protected Set<Article> searchArticles(String[] keywords, Date fromDate, Date toDate,
+	protected Map<String, Article> searchArticles(String[] keywords, Date fromDate, Date toDate,
 			Class<? extends ApiResult> resultClass, String rootElement) {
 		// Article set to be returned
-		Set<Article> set = new HashSet<Article>();
+		Map<String, Article> articles = new HashMap<String, Article>();
 
 		// Iterate over keywords, get API result for each keyword and add
 		// articles to set
@@ -95,7 +95,7 @@ public abstract class ApiFetcher extends Fetcher {
 
 					// Iterate over articles and add them to set
 					for (Article article : result.getArticles()) {
-						set.add(article);
+						articles.put(article.getUrl(), article);
 					}
 				}
 				catch (IOException e) {
@@ -105,9 +105,9 @@ public abstract class ApiFetcher extends Fetcher {
 			} while (offset + limit < result.getNumArticles() && offset < 100 /* false */);
 		}
 
-		this.populateArticleData(set);
+		this.populateArticleData(articles);
 
-		return set;
+		return articles;
 	}
 
 	/**
@@ -123,7 +123,7 @@ public abstract class ApiFetcher extends Fetcher {
 	 * @param resultClass
 	 * @return
 	 */
-	protected Set<Article> searchArticles(String[] keywords, Date fromDate, Date toDate,
+	protected Map<String, Article> searchArticles(String[] keywords, Date fromDate, Date toDate,
 			Class<? extends ApiResult> resultClass) {
 		return this.searchArticles(keywords, fromDate, toDate, resultClass, null);
 	}
