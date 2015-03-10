@@ -14,6 +14,6 @@ public class ConnectionHelper {
 	}
 	
 	public static String getURLContent(String url) throws IOException {
-		return ConnectionHelper.getURLContent(new URL(url));
+		return ConnectionHelper.getURLContent(new URL(url.replaceAll(" ", "%20")));
 	}
 }

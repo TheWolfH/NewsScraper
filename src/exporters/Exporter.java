@@ -42,7 +42,7 @@ public class Exporter {
 		createTables.addBatch("DELETE FROM article_keywords;");
 
 		createTables.executeBatch();
-
+		con.commit();
 	}
 
 	public void readArticles(Connection con, Map<String, Article> articles) throws SQLException {
