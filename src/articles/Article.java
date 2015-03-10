@@ -2,6 +2,8 @@ package articles;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.*;
 
@@ -13,6 +15,7 @@ public abstract class Article {
 	protected Date publicationDate;
 	protected String fullText;
 	protected String fullTextHTML;
+	protected Set<String> keywords;
 
 	/**
 	 * Constructs an Article object, setting the {@code url} and {@code title} properties.
@@ -22,6 +25,7 @@ public abstract class Article {
 	public Article(String url, String title) {
 		this.url = url;
 		this.title = title;
+		this.keywords = new HashSet<String>();
 	}
 
 	/**
@@ -35,42 +39,6 @@ public abstract class Article {
 	 * @throws IOException
 	 */
 	public abstract void populateData() throws IOException;
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((url == null) ? 0 : url.hashCode());
-		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Article other = (Article) obj;
-		if (url == null) {
-			if (other.url != null)
-				return false;
-		}
-		else if (!url.equals(other.url))
-			return false;
-		return true;
-	}
 
 	/**
 	 * @return the url
@@ -114,4 +82,18 @@ public abstract class Article {
 		return this.fullTextHTML;
 	}
 
+	/**
+	 * @return the keywords
+	 */
+	public Set<String> getKeywords() {
+		return this.keywords;
+	}
+	
+	/**
+	 * Adds a keyword to the keywords set
+	 * @param keyword the keyword to add
+	 */
+	public void addKeyword(String keyword) {
+		this.keywords.add(keyword);
+	}
 }

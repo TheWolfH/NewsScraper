@@ -18,3 +18,7 @@
 
 # Secret ApiKeys
 /src/helpers/Api.java
+
+# Sqlite database files
+*.db
+sqlite?.exe
