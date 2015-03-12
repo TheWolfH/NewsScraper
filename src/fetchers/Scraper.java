@@ -35,9 +35,9 @@ public abstract class Scraper extends Fetcher {
 	 * {@link #getUrlFromSearchResult(Element)} and
 	 * {@link #getTitleFromSearchResult(Element)} methods and creating objects
 	 * of a subclass of {@link articles.Article} using the
-	 * {@link #createArticleFromUrlAndTitle(String, String)} factory method. All
-	 * the methods mentioned above can be overridden in subclasses in order to
-	 * customize the behavior.
+	 * {@link #createArticle(String, String)} factory method. All the methods
+	 * mentioned above can be overridden in subclasses in order to customize the
+	 * behavior.
 	 * 
 	 * @param keywords
 	 *            the keywords to search for
@@ -86,7 +86,17 @@ public abstract class Scraper extends Fetcher {
 						String url = this.getUrlFromSearchResult(articleElement);
 						String title = this.getTitleFromSearchResult(articleElement);
 
-						articles.put(url, this.createArticleFromUrlAndTitle(url, title));
+						if (!articles.containsKey(url)) {
+							// Article has not been found yet: create Article
+							// object, add keyword to article, add article to
+							// map
+							articles.put(url, this.createArticle(url, title, keyword));
+						}
+						else {
+							// Article was already found before, add keyword to
+							// Article object in map
+						}
+
 					}
 
 					// Exit loop if less than limit articles were found (end of
@@ -159,7 +169,24 @@ public abstract class Scraper extends Fetcher {
 	 *            the title of the Article object to create
 	 * @return an object of the respective XYZArticle class
 	 */
-	protected abstract Article createArticleFromUrlAndTitle(String url, String title);
+	protected abstract Article createArticle(String url, String title);
+
+	/**
+	 * Factory method called by
+	 * {@link #searchArticles(String[], Date, Date, int)} to create an object of
+	 * a subclass of {@link articles.Article}. Must be implemented by subclasses
+	 * by returning an object of the respective XYZArticle class with the passed
+	 * {@code url}, {@code title} and {@code keyword}.
+	 * 
+	 * @param url
+	 *            the url of the Article object to create
+	 * @param title
+	 *            the title of the Article object to create
+	 * @param keyword
+	 *            the keyword to add to the keywords set of the article
+	 * @return an object of the respective XYZArticle class
+	 */
+	protected abstract Article createArticle(String url, String title, String keyword);
 
 	/**
 	 * Returns the selector used by

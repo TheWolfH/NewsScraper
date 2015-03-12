@@ -48,10 +48,15 @@ public class TelegraphScraper extends Scraper {
 	}
 
 	@Override
-	protected Article createArticleFromUrlAndTitle(String url, String title) {
+	protected Article createArticle(String url, String title) {
 		return new TelegraphArticle(url, title);
 	}
-
+	
+	@Override
+	protected Article createArticle(String url, String title, String keyword) {
+		return new TelegraphArticle(url, title, keyword);
+	}
+	
 	@Override
 	protected String getUrlSelector() {
 		return "div h3 a";

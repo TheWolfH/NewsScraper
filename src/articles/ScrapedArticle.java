@@ -23,6 +23,21 @@ public abstract class ScrapedArticle extends Article {
 	public ScrapedArticle(String url, String title) {
 		super(url, title);
 	}
+	
+	/**
+	 * Constructs a {@code ScrapedArticle}, setting the {@code url} and {@code title}
+	 * properties and adding the {@code keywords} to its keywords set.
+	 * 
+	 * @param url
+	 *            the url of the article
+	 * @param title
+	 *            the title (headline) of the article
+	 * @param keywords
+	 *            the keywords to add to the keywords set
+	 */
+	public ScrapedArticle(String url, String title, String keyword) {
+		super(url, title, keyword);
+	}
 
 	/**
 	 * Template method populating all empty properties of this article.

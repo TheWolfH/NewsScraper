@@ -95,7 +95,17 @@ public abstract class ApiFetcher extends Fetcher {
 
 					// Iterate over articles and add them to set
 					for (Article article : result.getArticles()) {
-						articles.put(article.getUrl(), article);
+						if (!articles.containsKey(article.getUrl())) {
+							// Article has not been found yet: add keyword to
+							// article, add article to map
+							article.addKeyword(keyword);
+							articles.put(article.getUrl(), article);
+						}
+						else {
+							// Article was already found before, add keyword to
+							// Article object in map
+							articles.get(article.getUrl()).addKeyword(keyword);
+						}
 					}
 				}
 				catch (IOException e) {

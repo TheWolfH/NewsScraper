@@ -8,6 +8,10 @@ public class TelegraphArticle extends ScrapedArticle {
 		super(url, title);
 	}
 
+	public TelegraphArticle(String url, String title, String keyword) {
+		super(url, title, keyword);
+	}
+	
 	@Override
 	protected String getSubtitleSelector() {
 		return ".twoThirds.gutter .storyhead h2";

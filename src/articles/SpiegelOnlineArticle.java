@@ -12,6 +12,10 @@ public class SpiegelOnlineArticle extends ScrapedArticle {
 	public SpiegelOnlineArticle(String url, String title) {
 		super(url, title);
 	}
+	
+	public SpiegelOnlineArticle(String url, String title, String keyword) {
+		super(url, title, keyword);
+	}
 
 	/*
 	 * (non-Javadoc)

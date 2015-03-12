@@ -1,6 +1,7 @@
 package articles;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,6 +31,44 @@ public abstract class Article {
 		this.url = url;
 		this.title = title;
 		this.keywords = new HashSet<String>();
+	}
+
+	/**
+	 * Constructs an Article object, setting the {@code url} and {@code title}
+	 * properties and adding the {@code keyword} to its keywords set.
+	 * 
+	 * @param url
+	 *            the url of the article
+	 * @param title
+	 *            the title (headline) of the article
+	 * @param keyword
+	 *            the keyword to add to the keywords set
+	 */
+	public Article(String url, String title, String keyword) {
+		this.url = url;
+		this.title = title;
+
+		this.keywords = new HashSet<String>();
+		this.keywords.add(keyword);
+	}
+	
+	/**
+	 * Constructs an Article object, setting the {@code url} and {@code title}
+	 * properties and adding the {@code keywords} to its keywords set.
+	 * 
+	 * @param url
+	 *            the url of the article
+	 * @param title
+	 *            the title (headline) of the article
+	 * @param keywords
+	 *            the keywords to add to the keywords set
+	 */
+	public Article(String url, String title, Collection<String> keywords) {
+		this.url = url;
+		this.title = title;
+
+		this.keywords = new HashSet<String>();
+		this.keywords.addAll(keywords);
 	}
 
 	/**
@@ -92,10 +131,12 @@ public abstract class Article {
 	public Set<String> getKeywords() {
 		return this.keywords;
 	}
-	
+
 	/**
 	 * Adds a keyword to the keywords set
-	 * @param keyword the keyword to add
+	 * 
+	 * @param keyword
+	 *            the keyword to add
 	 */
 	public void addKeyword(String keyword) {
 		this.keywords.add(keyword);

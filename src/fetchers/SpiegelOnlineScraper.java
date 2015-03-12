@@ -48,10 +48,15 @@ public class SpiegelOnlineScraper extends Scraper {
 	}
 
 	@Override
-	protected Article createArticleFromUrlAndTitle(String url, String title) {
+	protected Article createArticle(String url, String title) {
 		return new SpiegelOnlineArticle(url, title);
 	}
 
+	@Override
+	protected Article createArticle(String url, String title, String keyword) {
+		return new SpiegelOnlineArticle(url, title, keyword);
+	}
+	
 	@Override
 	protected String getUrlSelector() {
 		return "a";
