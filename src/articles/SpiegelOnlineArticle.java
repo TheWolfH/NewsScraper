@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 public class SpiegelOnlineArticle extends ScrapedArticle {
@@ -23,14 +24,14 @@ public class SpiegelOnlineArticle extends ScrapedArticle {
 	 * @see articles.ScrapedArticle#getPublicationDateFromDocument()
 	 */
 	@Override
-	protected Date getPublicationDateFromDocument() throws ParseException {
+	protected Date getPublicationDateFromDocument(Document doc) throws ParseException {
 		// Initialize variables
 		Elements elements;
 		String publicationDateString;
 		SimpleDateFormat dateFormatter;
 
 		// Normal case: time element with itemprop and datetime attributes
-		elements = this.document.select("time[itemprop=\"datePublished\"][datetime]");
+		elements = doc.select("time[itemprop=\"datePublished\"][datetime]");
 
 		if (!elements.isEmpty()) {
 			publicationDateString = elements.first().attr("datetime");
@@ -39,7 +40,7 @@ public class SpiegelOnlineArticle extends ScrapedArticle {
 		}
 
 		// Second case: span element with itemprop and content attributes
-		elements = this.document.select("span[itemprop=\"datePublished\"][content]");
+		elements = doc.select("span[itemprop=\"datePublished\"][content]");
 
 		if (!elements.isEmpty()) {
 			publicationDateString = elements.first().attr("content");
@@ -48,7 +49,7 @@ public class SpiegelOnlineArticle extends ScrapedArticle {
 		}
 
 		// Third case: simple span element, fetch date from text
-		elements = this.document.select(".module-box .article-function-box-wide span");
+		elements = doc.select(".module-box .article-function-box-wide span");
 		
 		if (!elements.isEmpty()) {
 			publicationDateString = elements.first().text();
@@ -57,7 +58,7 @@ public class SpiegelOnlineArticle extends ScrapedArticle {
 		}
 
 		// Fallback
-		return super.getPublicationDateFromDocument();
+		return super.getPublicationDateFromDocument(doc);
 	}
 
 	@Override

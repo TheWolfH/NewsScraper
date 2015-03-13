@@ -10,8 +10,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 public abstract class ScrapedArticle extends Article {
-	protected Document document;
-
 	/**
 	 * Constructs a {@code ScrapedArticle} using the given url and title.
 	 * 
@@ -23,10 +21,11 @@ public abstract class ScrapedArticle extends Article {
 	public ScrapedArticle(String url, String title) {
 		super(url, title);
 	}
-	
+
 	/**
-	 * Constructs a {@code ScrapedArticle}, setting the {@code url} and {@code title}
-	 * properties and adding the {@code keywords} to its keywords set.
+	 * Constructs a {@code ScrapedArticle}, setting the {@code url} and
+	 * {@code title} properties and adding the {@code keywords} to its keywords
+	 * set.
 	 * 
 	 * @param url
 	 *            the url of the article
@@ -58,26 +57,24 @@ public abstract class ScrapedArticle extends Article {
 	 *             server
 	 */
 	public void populateData() throws IOException {
-		if (this.document == null) {
-			this.document = Jsoup.connect(this.url).timeout(60000).get();
-		}
+		Document doc = Jsoup.connect(this.url).timeout(60000).get();
 
 		// Populate fields
 		if (this.subtitle == null) {
-			this.subtitle = this.getSubtitleFromDocument();
+			this.subtitle = this.getSubtitleFromDocument(doc);
 		}
 
 		if (this.fullText == null) {
-			this.fullText = this.getFullTextFromDocument();
+			this.fullText = this.getFullTextFromDocument(doc);
 		}
 
 		if (this.fullTextHTML == null) {
-			this.fullTextHTML = this.getFullTextHTMLFromDocument();
+			this.fullTextHTML = this.getFullTextHTMLFromDocument(doc);
 		}
 
 		if (this.publicationDate == null) {
 			try {
-				this.publicationDate = this.getPublicationDateFromDocument();
+				this.publicationDate = this.getPublicationDateFromDocument(doc);
 			}
 			catch (ParseException e) {
 				// TODO Auto-generated catch block
@@ -86,7 +83,8 @@ public abstract class ScrapedArticle extends Article {
 			}
 		}
 
-		System.out.println(this.fullText.substring(0, 100));
+		System.out.println(Thread.currentThread() + ": "
+				+ this.fullText.substring(0, Math.min(100, this.fullText.length())));
 	}
 
 	/**
@@ -96,10 +94,13 @@ public abstract class ScrapedArticle extends Article {
 	 * 
 	 * Can be overridden in subclasses if different behavior is necessary.
 	 * 
+	 * @param doc
+	 *            the document to extract the subtitle from
+	 * 
 	 * @return the subtitle of this article
 	 */
-	protected String getSubtitleFromDocument() {
-		return this.document.select(this.getSubtitleSelector()).text();
+	protected String getSubtitleFromDocument(Document doc) {
+		return doc.select(this.getSubtitleSelector()).text();
 	}
 
 	/**
@@ -109,10 +110,13 @@ public abstract class ScrapedArticle extends Article {
 	 * 
 	 * Can be overridden in subclasses if different behavior is necessary.
 	 * 
+	 * @param doc
+	 *            the document to extract the fullText from
+	 * 
 	 * @return the complete text of this article
 	 */
-	protected String getFullTextFromDocument() {
-		return this.document.select(this.getFullTextSelector()).text();
+	protected String getFullTextFromDocument(Document doc) {
+		return doc.select(this.getFullTextSelector()).text();
 	}
 
 	/**
@@ -122,10 +126,13 @@ public abstract class ScrapedArticle extends Article {
 	 * 
 	 * Can be overridden in subclasses if different behavior is necessary.
 	 * 
+	 * @param doc
+	 *            the document to extract the subtitle from
+	 * 
 	 * @return the complete HTML of this article
 	 */
-	protected String getFullTextHTMLFromDocument() {
-		return this.document.select(this.getFullTextSelector()).html();
+	protected String getFullTextHTMLFromDocument(Document doc) {
+		return doc.select(this.getFullTextSelector()).html();
 	}
 
 	/**
@@ -139,20 +146,24 @@ public abstract class ScrapedArticle extends Article {
 	 * 
 	 * Can be overridden in subclasses if different behavior is necessary.
 	 * 
+	 * @param doc
+	 *            the document to extract the subtitle from
+	 * 
 	 * @return the publication date of this article as a {@link java.util.Date}
 	 *         object
 	 */
-	protected Date getPublicationDateFromDocument() throws ParseException {
+	protected Date getPublicationDateFromDocument(Document doc) throws ParseException {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat(this.getPublicationDateFormat(),
 				this.getLocale());
 
-		String dateString = this.document.select(this.getPublicationDateSelector()).text();
+		String dateString = doc.select(this.getPublicationDateSelector()).text();
 		return dateFormatter.parse(dateString);
 	}
 
 	/**
-	 * Returns the selector used by {@link #getSubtitleFromDocument()} to
-	 * extract the subtitle of this article. Must be implemented by subclasses.
+	 * Returns the selector used by {@link #getSubtitleFromDocument(Document)}
+	 * to extract the subtitle of this article. Must be implemented by
+	 * subclasses.
 	 * 
 	 * @return the jQuery selector used to determine the element containing the
 	 *         subtitle of this article
@@ -160,9 +171,9 @@ public abstract class ScrapedArticle extends Article {
 	protected abstract String getSubtitleSelector();
 
 	/**
-	 * Returns the selector used by {@link #getPublicationDateFromDocument()} to
-	 * extract the publicationDate of this article. Must be implemented by
-	 * subclasses.
+	 * Returns the selector used by
+	 * {@link #getPublicationDateFromDocument(Document)} to extract the
+	 * publicationDate of this article. Must be implemented by subclasses.
 	 * 
 	 * @return the jQuery selector used to determine the element containing the
 	 *         publicationDate of this article
@@ -172,8 +183,8 @@ public abstract class ScrapedArticle extends Article {
 	/**
 	 * Returns the date format string (as specified in
 	 * {@link java.text.SimpleDateFormat}) which is used by
-	 * {@link #getPublicationDateFromDocument()} to extract the publicationDate
-	 * of this article. Must be implemented by subclasses.
+	 * {@link #getPublicationDateFromDocument(Document)} to extract the
+	 * publicationDate of this article. Must be implemented by subclasses.
 	 * 
 	 * @return the date format string used to determine the element containing
 	 *         the publicationDate of this article
@@ -182,9 +193,10 @@ public abstract class ScrapedArticle extends Article {
 
 	/**
 	 * Returns the {@link java.util.Locale} used by
-	 * {@link #getPublicationDateFromDocument()} to extract the publicationDate
-	 * of this article. Should match the country and/or main language of the
-	 * respective news provider. Must be implemented by subclasses.
+	 * {@link #getPublicationDateFromDocument(Document)} to extract the
+	 * publicationDate of this article. Should match the country and/or main
+	 * language of the respective news provider. Must be implemented by
+	 * subclasses.
 	 * 
 	 * @return the Locale used by {@link java.text.SimpleDateFormat} to parse
 	 *         the publicationDate of this article
@@ -192,10 +204,10 @@ public abstract class ScrapedArticle extends Article {
 	protected abstract Locale getLocale();
 
 	/**
-	 * Returns the selector used by {@link #getFullTextFromDocument()} and
-	 * {@link #getFullTextHTMLFromDocument()} to extract the fullText and
-	 * fullTextHTML properties of this article. Must be implemented by
-	 * subclasses.
+	 * Returns the selector used by {@link #getFullTextFromDocument(Document)}
+	 * and {@link #getFullTextHTMLFromDocument(Document)} to extract the
+	 * fullText and fullTextHTML properties of this article. Must be implemented
+	 * by subclasses.
 	 * 
 	 * @return the jQuery selector used to determine the element containing the
 	 *         fullText and fullTextHTML of this article
