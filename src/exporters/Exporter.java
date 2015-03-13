@@ -32,8 +32,8 @@ public class Exporter {
 
 		createTables.addBatch("PRAGMA foreign_keys = ON;");
 		createTables.addBatch("CREATE TABLE IF NOT EXISTS articles (id INTEGER PRIMARY KEY, "
-				+ "url TEXT, title TEXT, subtitle TEXT, publicationDate DATETIME, "
-				+ "fullText TEXT, fullTextHTML TEXT);");
+				+ "url TEXT UNIQUE NOT NULL, title TEXT NOT NULL, subtitle TEXT, "
+				+ "publicationDate DATETIME, fullText TEXT, fullTextHTML TEXT);");
 		createTables
 				.addBatch("CREATE TABLE IF NOT EXISTS article_keywords (id INTEGER PRIMARY KEY, "
 						+ "keyword TEXT, article_id INTEGER REFERENCES articles (id) "

@@ -95,6 +95,7 @@ public abstract class Scraper extends Fetcher {
 						else {
 							// Article was already found before, add keyword to
 							// Article object in map
+							articles.get(url).addKeyword(keyword);
 						}
 
 					}
