@@ -78,10 +78,12 @@ public abstract class Fetcher {
 			catch (ExecutionException e) {
 				// Exception thrown by article.populateData()
 				// TODO add error logging
+				e.printStackTrace();
 			}
 			catch (InterruptedException e) {
 				// Exception due to interruption
 				// TODO add generic exception?
+				e.printStackTrace();
 			}
 		}
 

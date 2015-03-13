@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 
 import exporters.Exporter;
 import results.GuardianResult;
@@ -22,22 +21,28 @@ public class GuardianFetcher extends ApiFetcher {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		StringBuilder sb = new StringBuilder(this.baseURL);
 
+		// Keyword
 		sb.append("&q=");
 		sb.append(keyword);
 
+		// Date range
 		sb.append("&from-date=");
 		sb.append(formatter.format(fromDate));
-
 		sb.append("&to-date=");
 		sb.append(formatter.format(toDate));
 
-		// Guardian API uses pages (1-based counting) instead of offsets!
+		// Pagination: Guardian API uses pages (1-based counting) instead of offsets
 		sb.append("&page=");
 		sb.append((int) (offset / limit + 1));
 
 		sb.append("&page-size=");
 		sb.append(limit);
+		
+		// Order by publication date
+		sb.append("&order-by=newest");
+		sb.append("&use-date=published");
 
+		// Indicate additional fields (subtitle and fullText)
 		sb.append("&show-fields=trailText,body");
 
 		return sb.toString();

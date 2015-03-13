@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
+import exporters.Exporter;
 import articles.Article;
 import articles.SpiegelOnlineArticle;
 
@@ -68,6 +69,7 @@ public class SpiegelOnlineScraper extends Scraper {
 	}
 
 	public static void main(String[] args) {
+		Date start = new Date();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
 		Date fromDate = null;
@@ -79,8 +81,20 @@ public class SpiegelOnlineScraper extends Scraper {
 		catch (ParseException e) {
 			e.printStackTrace();
 		}
-		
-		SpiegelOnlineScraper scraper = new SpiegelOnlineScraper();
-		scraper.searchArticles(new String[] { "Snowden" }, fromDate, toDate);
+
+		SpiegelOnlineScraper fetcher = new SpiegelOnlineScraper();
+		Map<String, Article> articles = fetcher.searchArticles(new String[] { "Snowden", "NSA" },
+				fromDate, toDate);
+
+		/*
+		 * for (Article article : articles) {
+		 * System.out.println(article.getFullText().substring(0, 100)); }
+		 */
+
+		Exporter exporter = new Exporter(articles);
+
+		System.out.println(articles.size());
+		Date end = new Date();
+		System.out.println(end.getTime() - start.getTime());
 	}
 }
