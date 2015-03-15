@@ -12,7 +12,7 @@ import articles.Article;
 public class GuardianFetcher extends ApiFetcher {
 
 	public GuardianFetcher() {
-		this.apiKey = helpers.Api.GUARDIAN.getKey();
+		this.apiKey = helpers.ApiKey.GUARDIAN.getKey();
 		this.baseURL = "http://content.guardianapis.com/search?api-key=" + this.apiKey;
 	}
 

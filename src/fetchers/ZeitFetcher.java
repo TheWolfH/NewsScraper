@@ -12,7 +12,7 @@ import articles.*;
 public class ZeitFetcher extends ApiFetcher {
 
 	public ZeitFetcher() {
-		this.apiKey = helpers.Api.ZEIT.getKey();
+		this.apiKey = helpers.ApiKey.ZEIT.getKey();
 		this.baseURL = "http://api.zeit.de/content?api_key=" + this.apiKey;
 	}
 

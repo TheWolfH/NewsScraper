@@ -17,7 +17,7 @@
 *.ucls
 
 # Secret ApiKeys
-/src/helpers/Api.java
+/src/helpers/ApiKey.java
 
 # Sqlite database files
 *.db
