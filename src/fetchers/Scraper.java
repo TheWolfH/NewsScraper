@@ -113,8 +113,6 @@ public abstract class Scraper extends Fetcher {
 								+ keyword);
 						break;
 					}
-
-					this.log.info("page");
 				}
 				catch (IOException e) {
 					// TODO Auto-generated catch block

@@ -57,12 +57,16 @@ public abstract class ApiFetcher extends Fetcher {
 	 */
 	protected Map<String, Article> searchArticles(String[] keywords, Date fromDate, Date toDate,
 			Class<? extends ApiResult> resultClass, String rootElement) {
+		this.log.info("Start fetching base url " + this.baseURL);
+		
 		// Article set to be returned
 		Map<String, Article> articles = new HashMap<String, Article>();
 
 		// Iterate over keywords, get API result for each keyword and add
 		// articles to set
 		for (String keyword : keywords) {
+			this.log.info("Start fetching for keyword " + keyword);
+
 			// Set limit and offset for pagination, initialize ApiResult object
 			int limit = 10;
 			int offset = 0;
@@ -110,13 +114,22 @@ public abstract class ApiFetcher extends Fetcher {
 				}
 				catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					this.log.severe("IOException when processing url "
+							+ this.getSearchURL(keyword, fromDate, toDate, offset, limit) + ": "
+							+ e.getMessage());
+					//e.printStackTrace();
 				}
 			} while (offset + limit < result.getNumArticles() && offset < 100 /* false */);
 		}
+		
+		this.log.info("Finished fetching base url " + this.baseURL);
+		this.log.info("Start populating article data for base url " + this.baseURL);
 
 		this.populateArticleData(articles);
 
+		this.log.info("Finished populating article data for base url " + this.baseURL
+				+ ", returning articles");
+		
 		return articles;
 	}
 
