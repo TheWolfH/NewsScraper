@@ -1,5 +1,7 @@
 package fetchers;
 
+import helpers.LoggerGenerator;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
@@ -10,6 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import articles.Article;
 
@@ -41,6 +44,8 @@ public abstract class Fetcher {
 	 * should use this property as the basis for the complete search url.
 	 */
 	protected String baseURL;
+
+	protected final Logger log = LoggerGenerator.getLoggerGenerator().getLogger();
 
 	/**
 	 * Asynchronously populates all fields on the articles in the given

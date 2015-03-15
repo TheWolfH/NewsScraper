@@ -57,6 +57,8 @@ public abstract class ScrapedArticle extends Article {
 	 *             server
 	 */
 	public void populateData() throws IOException {
+		this.log.finest(Thread.currentThread() + " starts populating article data for " + this.url);
+
 		Document doc = Jsoup.connect(this.url).timeout(60000).get();
 
 		// Populate fields
@@ -77,14 +79,16 @@ public abstract class ScrapedArticle extends Article {
 				this.publicationDate = this.getPublicationDateFromDocument(doc);
 			}
 			catch (ParseException e) {
-				// TODO Auto-generated catch block
-				System.out.println(this.url);
-				e.printStackTrace();
+				// In case of failure: set publicationDate to 0001-01-01
+				// 00:00:00 (GMT)
+				this.publicationDate = new Date(-62167392000000L);
+				this.log.warning("Unable to parse date for article with url " + this.url
+						+ ", set to default date (0001-01-01 00:00:00 GMT)");
+				// e.printStackTrace();
 			}
 		}
 
-		System.out.println(Thread.currentThread() + ": "
-				+ this.fullText.substring(0, Math.min(100, this.fullText.length())));
+		this.log.finest(Thread.currentThread() + " finished populating article data for " + this.url);
 	}
 
 	/**

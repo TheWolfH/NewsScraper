@@ -53,10 +53,14 @@ public abstract class Scraper extends Fetcher {
 	 */
 	protected Map<String, Article> searchArticles(String[] keywords, Date fromDate, Date toDate,
 			int articlesPerPage) {
+		this.log.info("Start scraping base url " + this.baseURL);
+
 		// Article set to be returned
 		Map<String, Article> articles = new HashMap<String, Article>();
 
 		for (String keyword : keywords) {
+			this.log.info("Start scraping for keyword " + keyword);
+
 			// Set limit and offset for pagination, initialize articleElements
 			// object
 			int limit = articlesPerPage;
@@ -77,6 +81,8 @@ public abstract class Scraper extends Fetcher {
 
 					// Exit loop when no more articles are found
 					if (articleElements.size() < 1) {
+						this.log.info("No more articles found, stopped scraping for keyword "
+								+ keyword);
 						break;
 					}
 
@@ -103,19 +109,29 @@ public abstract class Scraper extends Fetcher {
 					// Exit loop if less than limit articles were found (end of
 					// results)
 					if (articleElements.size() < limit) {
+						this.log.info("Found less articles than expected, stopped scraping for keyword "
+								+ keyword);
 						break;
 					}
 
-					System.out.println("page");
+					this.log.info("page");
 				}
 				catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					this.log.severe("IOException when processing url "
+							+ this.getSearchURL(keyword, fromDate, toDate, offset, limit) + ": "
+							+ e.getMessage());
 				}
 			} while (true);
 		}
 
+		this.log.info("Finished scraping base url " + this.baseURL);
+		this.log.info("Start populating article data for base url " + this.baseURL);
+
 		this.populateArticleData(articles);
+
+		this.log.info("Finished populating article data for base url " + this.baseURL
+				+ ", returning articles");
 
 		return articles;
 	}

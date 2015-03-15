@@ -72,11 +72,6 @@ public class ZeitFetcher extends ApiFetcher {
 		Map<String, Article> articles = fetcher.searchArticles(new String[] { "Snowden", "NSA" },
 				fromDate, toDate);
 
-		/*
-		 * for (Article article : articles) {
-		 * System.out.println(article.getFullText().substring(0, 100)); }
-		 */
-
 		Exporter exporter = new Exporter(articles);
 
 		System.out.println(articles.size());

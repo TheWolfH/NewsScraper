@@ -1,10 +1,13 @@
 package articles;
 
+import helpers.LoggerGenerator;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import com.fasterxml.jackson.annotation.*;
 
@@ -17,6 +20,8 @@ public abstract class Article {
 	protected String fullText;
 	protected String fullTextHTML;
 	protected Set<String> keywords;
+
+	protected final Logger log = LoggerGenerator.getLoggerGenerator().getLogger();
 
 	/**
 	 * Constructs an Article object, setting the {@code url} and {@code title}
@@ -51,7 +56,7 @@ public abstract class Article {
 		this.keywords = new HashSet<String>();
 		this.keywords.add(keyword);
 	}
-	
+
 	/**
 	 * Constructs an Article object, setting the {@code url} and {@code title}
 	 * properties and adding the {@code keywords} to its keywords set.

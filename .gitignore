@@ -25,3 +25,6 @@ sqlite?.exe
 
 # Java debugging files
 *.hprof
+
+# Logging
+log.txt*
