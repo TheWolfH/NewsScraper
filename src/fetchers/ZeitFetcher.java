@@ -1,11 +1,9 @@
 package fetchers;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
-import exporters.Exporter;
 import results.ZeitResult;
 import articles.*;
 
@@ -53,30 +51,4 @@ public class ZeitFetcher extends ApiFetcher {
 
 		return sb.toString();
 	}
-
-	public static void main(String[] args) {
-		Date start = new Date();
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-
-		Date fromDate = null;
-		Date toDate = null;
-		try {
-			fromDate = format.parse("2013-01-01");
-			toDate = format.parse("2014-12-31");
-		}
-		catch (ParseException e) {
-			e.printStackTrace();
-		}
-
-		ZeitFetcher fetcher = new ZeitFetcher();
-		Map<String, Article> articles = fetcher.searchArticles(new String[] { "Snowden", "NSA" },
-				fromDate, toDate);
-
-		Exporter exporter = new Exporter(articles);
-
-		System.out.println(articles.size());
-		Date end = new Date();
-		System.out.println(end.getTime() - start.getTime());
-	}
-
 }

@@ -119,7 +119,7 @@ public abstract class ApiFetcher extends Fetcher {
 							+ e.getMessage());
 					//e.printStackTrace();
 				}
-			} while (offset + limit < result.getNumArticles() && offset < 100 /* false */);
+			} while (offset + limit < result.getNumArticles() /* && offset < 100  false */);
 		}
 		
 		this.log.info("Finished fetching base url " + this.baseURL);

@@ -1,39 +1,46 @@
 package exporters;
 
+import gui.Wrapper;
+import helpers.DataSource;
+import helpers.LoggerGenerator;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import articles.Article;
 
 public class Exporter {
-	public Exporter(Map<String, Article> articles) {
-		try {
-			Connection con = DriverManager.getConnection("jdbc:sqlite:database.db");
-			con.setAutoCommit(false);
-			con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+	protected Connection con;
+	protected Map<DataSource, Map<String, Article>> result;
+	protected final Logger log = LoggerGenerator.getLoggerGenerator().getLogger();
 
-			this.setupDatabase(con);
-			this.readArticles(con, articles);
-		}
-		catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public Exporter(Map<DataSource, Map<String, Article>> result) throws SQLException {
+		this.result = result;
+
+		// Connect to database
+		this.con = DriverManager.getConnection("jdbc:sqlite:database.db");
+		this.con.setAutoCommit(false);
+		this.con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+
+		this.setupDatabase();
 	}
 
-	protected void setupDatabase(Connection con) throws SQLException {
-		Statement createTables = con.createStatement();
+	protected void setupDatabase() throws SQLException {
+		Statement createTables = this.con.createStatement();
 
 		createTables.addBatch("PRAGMA foreign_keys = ON;");
 		createTables.addBatch("CREATE TABLE IF NOT EXISTS articles (id INTEGER PRIMARY KEY, "
 				+ "url TEXT UNIQUE NOT NULL, title TEXT NOT NULL, subtitle TEXT, "
-				+ "publicationDate DATETIME, fullText TEXT, fullTextHTML TEXT);");
+				+ "publicationDate DATETIME, fullText TEXT, fullTextHTML TEXT, source TEXT);");
 		createTables
 				.addBatch("CREATE TABLE IF NOT EXISTS article_keywords (id INTEGER PRIMARY KEY, "
 						+ "keyword TEXT, article_id INTEGER REFERENCES articles (id) "
@@ -42,60 +49,102 @@ public class Exporter {
 		createTables.addBatch("DELETE FROM article_keywords;");
 
 		createTables.executeBatch();
-		con.commit();
+		this.con.commit();
 	}
 
-	public void readArticles(Connection con, Map<String, Article> articles) throws SQLException {
-		PreparedStatement insertArticle = con.prepareStatement("INSERT INTO articles "
-				+ "(url, title, subtitle, publicationDate, fullText, fullTextHTML) "
-				+ "VALUES (?, ?, ?, datetime(?), ?, ?)", Statement.RETURN_GENERATED_KEYS);
-		PreparedStatement insertArticleKeyword = con
+	public void readArticles() throws SQLException {
+		// Prepare statement for INSERTing article rows
+		PreparedStatement insertArticle = this.con.prepareStatement("INSERT INTO articles "
+				+ "(url, title, subtitle, publicationDate, fullText, fullTextHTML, source) "
+				+ "VALUES (?, ?, ?, datetime(?), ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+
+		// Prepare statement for INSERTing article_keywords rows
+		PreparedStatement insertArticleKeyword = this.con
 				.prepareStatement("INSERT INTO article_keywords " + "(keyword, article_id) "
 						+ "VALUES (?, ?)");
+
+		// Initialize date formatter
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
 
+		// Helper variables
 		int affectedRows = 0;
 		long articleId = 0;
 
-		for (Article article : articles.values()) {
-			insertArticle.setString(1, article.getUrl());
-			insertArticle.setString(2, article.getTitle());
-			insertArticle.setString(3, article.getSubtitle());
-			insertArticle.setString(4, formatter.format(article.getPublicationDate()));
-			insertArticle.setString(5, article.getFullText());
-			insertArticle.setString(6, article.getFullTextHTML());
+		// Iterate over data sources, get articles for each data source
+		for (DataSource source : this.result.keySet()) {
+			Map<String, Article> articles = this.result.get(source);
 
-			affectedRows = insertArticle.executeUpdate();
+			// Iterate over articles, insert into database
+			for (Article article : articles.values()) {
+				insertArticle.setString(1, article.getUrl());
+				insertArticle.setString(2, article.getTitle());
+				insertArticle.setString(3, article.getSubtitle());
+				insertArticle.setString(4, formatter.format(article.getPublicationDate()));
+				insertArticle.setString(5, article.getFullText());
+				insertArticle.setString(6, article.getFullTextHTML());
+				insertArticle.setString(7, source.getName());
 
-			if (affectedRows != 1) {
-				// TODO Custom exception
-				throw new SQLException();
-			}
+				// Check number of affected rows (must be 1)
+				affectedRows = insertArticle.executeUpdate();
 
-			ResultSet generatedKeys = insertArticle.getGeneratedKeys();
-
-			if (generatedKeys.next()) {
-				articleId = generatedKeys.getLong(1);
-			}
-			else {
-				// TODO Custom exception
-				throw new SQLException();
-			}
-
-			if (article.getKeywords() != null) {
-				for (String keyword : article.getKeywords()) {
-					insertArticleKeyword.setString(1, keyword);
-					insertArticleKeyword.setLong(2, articleId);
-
-					insertArticleKeyword.executeUpdate();
+				if (affectedRows != 1) {
+					// TODO Custom exception
+					throw new SQLException();
 				}
-			}
 
-			con.commit();
+				// Retrieve id of inserted article for article keywords
+				ResultSet generatedKeys = insertArticle.getGeneratedKeys();
+
+				if (generatedKeys.next()) {
+					articleId = generatedKeys.getLong(1);
+				}
+				else {
+					// TODO Custom exception
+					throw new SQLException();
+				}
+
+				// Iterate over article keywords and insert into database
+				if (article.getKeywords() != null) {
+					for (String keyword : article.getKeywords()) {
+						insertArticleKeyword.setString(1, keyword);
+						insertArticleKeyword.setLong(2, articleId);
+
+						insertArticleKeyword.executeUpdate();
+					}
+				}
+
+				this.con.commit();
+			}
 		}
 	}
 
 	public static void main(String[] args) {
-		Exporter e = new Exporter(null);
+		Date start = new Date();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+		Date fromDate = null;
+		Date toDate = null;
+		try {
+			fromDate = format.parse("2013-01-01");
+			toDate = format.parse("2014-12-31");
+		}
+		catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		Map<DataSource, Map<String, Article>> articles = Wrapper.searchArticles(new String[] {
+				"NSA", "Snowden" }, fromDate, toDate);
+		
+		try {
+			Exporter export = new Exporter(articles);
+			export.readArticles();
+		}
+		catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		Date end = new Date();
+		System.out.println(end.getTime() - start.getTime());
 	}
 }
