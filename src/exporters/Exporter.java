@@ -47,6 +47,7 @@ public class Exporter {
 						+ "DEFERRABLE INITIALLY DEFERRED)");
 		createTables.addBatch("DELETE FROM articles;");
 		createTables.addBatch("DELETE FROM article_keywords;");
+		createTables.addBatch("VACUUM;");
 
 		createTables.executeBatch();
 		this.con.commit();
@@ -119,22 +120,33 @@ public class Exporter {
 	}
 
 	public static void main(String[] args) {
+		if (args.length < 3) {
+			throw new IllegalArgumentException(
+					"At least three arguments (fromDate, toDate, keywords...) expected");
+		}
+
 		Date start = new Date();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
 		Date fromDate = null;
 		Date toDate = null;
 		try {
-			fromDate = format.parse("2013-01-01");
-			toDate = format.parse("2014-12-31");
+			fromDate = format.parse(args[0]);// format.parse("2013-01-01");
+			toDate = format.parse(args[1]);// format.parse("2014-12-31");
 		}
 		catch (ParseException e) {
 			e.printStackTrace();
 		}
 
-		Map<DataSource, Map<String, Article>> articles = Wrapper.searchArticles(new String[] {
-				"NSA", "Snowden" }, fromDate, toDate);
-		
+		String[] keywords = new String[args.length - 2];
+
+		for (int i = 2; i < args.length; i++) {
+			keywords[i-2] = args[i];
+		}
+
+		Map<DataSource, Map<String, Article>> articles = Wrapper.searchArticles(keywords/*new String[] {
+				"NSA", "Snowden" }*/, fromDate, toDate);
+
 		try {
 			Exporter export = new Exporter(articles);
 			export.readArticles();
