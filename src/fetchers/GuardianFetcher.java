@@ -49,6 +49,6 @@ public class GuardianFetcher extends ApiFetcher {
 
 	@Override
 	public Map<String, Article> searchArticles(String[] keywords, Date fromDate, Date toDate) {
-		return super.searchArticles(keywords, fromDate, toDate, GuardianResult.class, "response");
+		return super.searchArticles(keywords, fromDate, toDate, GuardianResult.class, "response", 50);
 	}
 }

@@ -21,7 +21,7 @@ import articles.*;
  * an arbitrary news provider. This class not only lays out the methods needed
  * in order to implement your own news provider, but provides rich pre-defined
  * functionality, namely the
- * {@link #searchArticles(String[], Date, Date, Class, String)} method, which in
+ * {@link #searchArticles(String[], Date, Date, Class, String, int)} method, which in
  * most cases can simply be called with the appropriate parameters by
  * subclasses. However, in case the default functionality needs to be
  * customized, the {@link Fetcher#searchArticles(String[], Date, Date)} method
@@ -53,10 +53,11 @@ public abstract class ApiFetcher extends Fetcher {
 	 * @param toDate
 	 * @param resultClass
 	 * @param rootElement
+	 * @param limit TODO
 	 * @return
 	 */
 	protected Map<String, Article> searchArticles(String[] keywords, Date fromDate, Date toDate,
-			Class<? extends ApiResult> resultClass, String rootElement) {
+			Class<? extends ApiResult> resultClass, String rootElement, int limit) {
 		this.log.info("Start fetching base url " + this.baseURL);
 		
 		// Article set to be returned
@@ -67,8 +68,7 @@ public abstract class ApiFetcher extends Fetcher {
 		for (String keyword : keywords) {
 			this.log.info("Start fetching for keyword " + keyword);
 
-			// Set limit and offset for pagination, initialize ApiResult object
-			int limit = 10;
+			// Initialize offset (for pagination) and ApiResult object
 			int offset = 0;
 			ApiResult result = null;
 
@@ -131,23 +131,5 @@ public abstract class ApiFetcher extends Fetcher {
 				+ ", returning articles");
 		
 		return articles;
-	}
-
-	/**
-	 * Wrapper method for
-	 * {@link #searchArticles(String[], Date, Date, Class, String)} in case the
-	 * JSON delivered when performing the query returned by
-	 * {@link fetchers.Fetcher#getSearchURL(String, Date, Date, int, int)} does
-	 * not wrap the results in a root element.
-	 * 
-	 * @param keywords
-	 * @param fromDate
-	 * @param toDate
-	 * @param resultClass
-	 * @return
-	 */
-	protected Map<String, Article> searchArticles(String[] keywords, Date fromDate, Date toDate,
-			Class<? extends ApiResult> resultClass) {
-		return this.searchArticles(keywords, fromDate, toDate, resultClass, null);
 	}
 }

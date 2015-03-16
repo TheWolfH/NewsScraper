@@ -16,7 +16,7 @@ public class ZeitFetcher extends ApiFetcher {
 
 	@Override
 	public Map<String, Article> searchArticles(String[] keywords, Date fromDate, Date toDate) {
-		return super.searchArticles(keywords, fromDate, toDate, ZeitResult.class);
+		return super.searchArticles(keywords, fromDate, toDate, ZeitResult.class, null, 1000);
 	}
 
 	@Override
