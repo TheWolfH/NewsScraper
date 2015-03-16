@@ -45,6 +45,10 @@ public abstract class Fetcher {
 	 */
 	protected String baseURL;
 
+	/**
+	 * Internal logging utility. Can and should be used by subclasses to provide
+	 * feedback to the user in case of any errors.
+	 */
 	protected final Logger log = LoggerGenerator.getLoggerGenerator().getLogger();
 
 	/**

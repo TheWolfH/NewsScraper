@@ -13,14 +13,49 @@ import com.fasterxml.jackson.annotation.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Article {
-	protected String url;
+	/**
+	 * The url pointing to the web version of this article. Immutable as it is
+	 * used for identification.
+	 */
+	protected final String url;
+
+	/**
+	 * The title (headline) of this article
+	 */
 	protected String title;
+
+	/**
+	 * The subtitle (byline) of this article
+	 */
 	protected String subtitle;
+
+	/**
+	 * The date (and time) this article was published. Initial publishing time
+	 * is preferred over last updated timestamps.
+	 */
 	protected Date publicationDate;
+
+	/**
+	 * The entire text of this article, stripped of all HTML and/or other markup
+	 */
 	protected String fullText;
+
+	/**
+	 * The entire HTML code of this article. Does not include any boilerplate
+	 * code of the site (header, footer, comments section etc.), but only the
+	 * actual article content.
+	 */
 	protected String fullTextHTML;
+	
+	/**
+	 * The keywords this article was found by
+	 */
 	protected Set<String> keywords;
 
+	/**
+	 * Internal logging utility. Can and should be used by subclasses to provide
+	 * feedback to the user in case of any errors.
+	 */
 	protected final Logger log = LoggerGenerator.getLoggerGenerator().getLogger();
 
 	/**
