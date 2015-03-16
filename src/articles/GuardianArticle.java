@@ -24,7 +24,14 @@ public class GuardianArticle extends Article {
 		if (this.fields != null) {
 			this.subtitle = this.fields.subtitle;
 			this.fullTextHTML = this.fields.fullTextHTML;
-			this.fullText = Jsoup.parse(this.fullTextHTML).text();
+			
+			// Some Guardian "articles" do not possess any text (cartoons etc)
+			if (this.fullTextHTML != null) {
+				this.fullText = Jsoup.parse(this.fullTextHTML).text();
+			}
+			else {
+				this.log.warning("No text provided for " + this.url);
+			}
 			
 			this.fields = null;
 		}
