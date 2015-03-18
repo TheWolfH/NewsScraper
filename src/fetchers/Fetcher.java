@@ -61,7 +61,7 @@ public abstract class Fetcher {
 	 */
 	protected void populateArticleData(Map<String, Article> articles) {
 		// ExecutorService to asynchronously get article fullTexts
-		ExecutorService fullTextFetcher = Executors.newFixedThreadPool(8);
+		ExecutorService fullTextFetcher = Executors.newFixedThreadPool(32);
 		Set<Future<Void>> futures = new HashSet<Future<Void>>();
 
 		// Iterate over all articles found and asynchronously populate fullText
@@ -87,7 +87,8 @@ public abstract class Fetcher {
 			catch (ExecutionException e) {
 				// Exception thrown by article.populateData()
 				// TODO add error logging
-				e.printStackTrace();
+				this.log.warning("Exception thrown when trying to populate article data: "
+						+ e.getCause().toString());
 			}
 			catch (InterruptedException e) {
 				// Exception due to interruption
@@ -120,8 +121,8 @@ public abstract class Fetcher {
 	 * @param toDate
 	 *            the latest date an article may have been published on to be
 	 *            returned
-	 * @return a Set of {@link articles.Article} objects representing newspaper
-	 *         articles
+	 * @return a Map of {@link articles.Article} objects representing newspaper
+	 *         articles mapped to their url
 	 */
 	public abstract Map<String, Article> searchArticles(String[] keywords, Date fromDate,
 			Date toDate);

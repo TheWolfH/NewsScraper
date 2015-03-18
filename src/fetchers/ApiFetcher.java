@@ -21,8 +21,8 @@ import articles.*;
  * an arbitrary news provider. This class not only lays out the methods needed
  * in order to implement your own news provider, but provides rich pre-defined
  * functionality, namely the
- * {@link #searchArticles(String[], Date, Date, Class, String, int)} method, which in
- * most cases can simply be called with the appropriate parameters by
+ * {@link #searchArticles(String[], Date, Date, Class, String, int)} method,
+ * which in most cases can simply be called with the appropriate parameters by
  * subclasses. However, in case the default functionality needs to be
  * customized, the {@link Fetcher#searchArticles(String[], Date, Date)} method
  * can also be implemented independently.
@@ -41,25 +41,41 @@ public abstract class ApiFetcher extends Fetcher {
 	protected String apiKey;
 
 	/**
-	 * TODO handle numberPerPage, mention in javadoc Template method returning a
-	 * {@link java.util.Set} of {@link articles.Article} objects representing
-	 * articles that contain one or more of the strings in {@code keywords} and
-	 * that were published on or after {@code fromDate} and on or before
-	 * {@code toDate}.
-	 * 
+	 * Template method returning a {@link java.util.Map} of
+	 * {@link articles.Article} objects representing articles that contain one
+	 * or more of the strings in {@code keywords} and that were published on or
+	 * after {@code fromDate} and on or before {@code toDate}. The method takes
+	 * the urls provided by {@link #getSearchURL(String, Date, Date, int, int)},
+	 * parses the JSON output into an instance of {@code resultClass} and
+	 * extracts the articles using the {@link results.ApiResult#getArticles()}
+	 * method. As many APIs impose a limit on the number of articles returned
+	 * per call, pagination is supported via the {@code limit} parameter, which
+	 * represents the number of articles per page and is passed into the
+	 * {@link #getSearchURL(String, Date, Date, int, int)} method.
 	 * 
 	 * @param keywords
+	 *            the keywords to be searched for
 	 * @param fromDate
+	 *            the earliest date an article may have been published on to be
+	 *            returned
 	 * @param toDate
+	 *            the latest date an article may have been published on to be
+	 *            returned
 	 * @param resultClass
+	 *            the class representing the result of a call to the respective
+	 *            API
 	 * @param rootElement
-	 * @param limit TODO
-	 * @return
+	 *            the name of the JSON property the result is wrapped into (e.g.
+	 *            "response") or {@code null} if the result is not wrapped
+	 * @param limit
+	 *            the number of articles returned per API call
+	 * @return a Map of {@link articles.Article} objects representing newspaper
+	 *         articles mapped to their url
 	 */
 	protected Map<String, Article> searchArticles(String[] keywords, Date fromDate, Date toDate,
 			Class<? extends ApiResult> resultClass, String rootElement, int limit) {
 		this.log.info("Start fetching base url " + this.baseURL);
-		
+
 		// Article set to be returned
 		Map<String, Article> articles = new HashMap<String, Article>();
 
@@ -117,11 +133,11 @@ public abstract class ApiFetcher extends Fetcher {
 					this.log.severe("IOException when processing url "
 							+ this.getSearchURL(keyword, fromDate, toDate, offset, limit) + ": "
 							+ e.getMessage());
-					//e.printStackTrace();
+					// e.printStackTrace();
 				}
-			} while (offset + limit < result.getNumArticles() /* && offset < 100  false */);
+			} while (offset + limit < result.getNumArticles());
 		}
-		
+
 		this.log.info("Finished fetching base url " + this.baseURL);
 		this.log.info("Start populating article data for base url " + this.baseURL);
 
@@ -129,7 +145,7 @@ public abstract class ApiFetcher extends Fetcher {
 
 		this.log.info("Finished populating article data for base url " + this.baseURL
 				+ ", returning articles");
-		
+
 		return articles;
 	}
 }
