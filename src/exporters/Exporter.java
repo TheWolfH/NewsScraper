@@ -152,10 +152,10 @@ public class Exporter {
 		}
 
 		List<DataSource> sources = new ArrayList<DataSource>();
-		sources.add(DataSource.SPIEGEL);
+		sources.add(DataSource.STERN);
 
 		Map<DataSource, Map<String, Article>> articles = Wrapper.searchArticles(keywords, fromDate,
-				toDate /*, sources*/ );
+				toDate /*, sources */);
 
 		try {
 			Exporter export = new Exporter(articles);

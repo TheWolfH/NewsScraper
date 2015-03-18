@@ -8,7 +8,8 @@ public enum DataSource {
 	SPIEGEL("Der Spiegel", new SpiegelScraper()),
 	TELEGRAPH("The Telegraph", new TelegraphScraper()),
 	ZEIT("Die Zeit", new ZeitFetcher()),
-	TAGESSPIEGEL("Der Tagesspiegel", new TagesspiegelScraper())
+	TAGESSPIEGEL("Der Tagesspiegel", new TagesspiegelScraper()),
+	STERN("Stern", new SternScraper())
 	/*WELTONLINE("Die Welt Online", new WeltOnlineScraper())*/;
 	
 	private String name;
