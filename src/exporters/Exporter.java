@@ -12,7 +12,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -47,10 +49,13 @@ public class Exporter {
 						+ "DEFERRABLE INITIALLY DEFERRED)");
 		createTables.addBatch("DELETE FROM articles;");
 		createTables.addBatch("DELETE FROM article_keywords;");
-		createTables.addBatch("VACUUM;");
 
 		createTables.executeBatch();
 		this.con.commit();
+
+		this.con.setAutoCommit(true);
+		createTables.execute("VACUUM;");
+		this.con.setAutoCommit(false);
 	}
 
 	public void readArticles() throws SQLException {
@@ -77,6 +82,7 @@ public class Exporter {
 
 			// Iterate over articles, insert into database
 			for (Article article : articles.values()) {
+				// TODO decide how to handle "incomplete" article objects
 				insertArticle.setString(1, article.getUrl());
 				insertArticle.setString(2, article.getTitle());
 				insertArticle.setString(3, article.getSubtitle());
@@ -141,11 +147,14 @@ public class Exporter {
 		String[] keywords = new String[args.length - 2];
 
 		for (int i = 2; i < args.length; i++) {
-			keywords[i-2] = args[i];
+			keywords[i - 2] = args[i];
 		}
 
-		Map<DataSource, Map<String, Article>> articles = Wrapper.searchArticles(keywords/*new String[] {
-				"NSA", "Snowden" }*/, fromDate, toDate);
+		List<DataSource> sources = new ArrayList<DataSource>();
+		sources.add(DataSource.SPIEGELONLINE);
+
+		Map<DataSource, Map<String, Article>> articles = Wrapper.searchArticles(keywords, fromDate,
+				toDate , sources );
 
 		try {
 			Exporter export = new Exporter(articles);

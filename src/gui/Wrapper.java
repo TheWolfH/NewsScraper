@@ -15,7 +15,7 @@ import articles.Article;
 public class Wrapper {
 	protected static final Logger log = LoggerGenerator.getLoggerGenerator().getLogger();
 
-	public Wrapper() {
+	protected Wrapper() {
 
 	}
 
