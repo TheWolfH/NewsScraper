@@ -67,6 +67,7 @@ public abstract class Scraper extends Fetcher {
 			int offset = 0;
 			Elements articleElements = null;
 
+			// Iterate over pagination
 			do {
 				try {
 					// Do not raise offset in first loop invocation
@@ -106,12 +107,13 @@ public abstract class Scraper extends Fetcher {
 
 					}
 
-					// Exit loop if less than limit articles were found (end of
-					// results)
+					// Call hook if less articles are found than expected
+					// Hook returns true if loop is to be aborted
 					if (articleElements.size() < limit) {
-						this.log.info("Found less articles than expected, stopped scraping for keyword "
-								+ keyword);
-						break;
+						if (this.lessArticlesThanExpectedHook(articlesPerPage,
+								articleElements.size(), keyword)) {
+							break;
+						}
 					}
 				}
 				catch (IOException e) {
@@ -132,6 +134,36 @@ public abstract class Scraper extends Fetcher {
 				+ ", returning articles");
 
 		return articles;
+	}
+
+	/**
+	 * Hook method called from
+	 * {@link #searchArticles(String[], Date, Date, int)} whenever a search
+	 * result page contains less than {@code articlesPerPage}. The method is
+	 * passed the number of articles that were expected ({@code articlesPerPage}
+	 * from said method), the number of articles actually encountered, and
+	 * keyword currently processed. Returns a boolean indicating whether
+	 * searching for the current keyword shall be aborted ({@code true}) or not
+	 * ({@code false}). The default implementation logs an event with severity
+	 * {@code Level.INFO} and returns {@code true}. Can be overridden by
+	 * subclasses to implement different behavior, mainly if the search
+	 * functionality does not reliably return a fixed number of results per
+	 * page.
+	 * 
+	 * @param expectedArticles
+	 *            the number of articles that were expected to be found
+	 * @param actualArticles
+	 *            the number of articles actually found
+	 * @param keyword
+	 *            the current keyword being processed
+	 * @return whether to abort the current keyword loop ({@code true}) or not (
+	 *         {@code false})
+	 */
+	protected boolean lessArticlesThanExpectedHook(int expectedArticles, int actualArticles,
+			String keyword) {
+		this.log.info("Found less articles than expected, stopped scraping for keyword " + keyword);
+
+		return true;
 	}
 
 	/**
