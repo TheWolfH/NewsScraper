@@ -6,7 +6,9 @@ public enum DataSource {
 	GUARDIAN("The Guardian", new GuardianFetcher()),
 	SPIEGELONLINE("Spiegel Online", new SpiegelOnlineScraper()),
 	TELEGRAPH("The Telegraph", new TelegraphScraper()),
-	ZEIT("Die Zeit", new ZeitFetcher());
+	ZEIT("Die Zeit", new ZeitFetcher()),
+	TAGESSPIEGEL("Der Tagesspiegel", new TagesspiegelScraper())
+	/*WELTONLINE("Die Welt Online", new WeltOnlineScraper())*/;
 	
 	private String name;
 	private Fetcher fetcher;
