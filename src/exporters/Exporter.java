@@ -37,24 +37,25 @@ public class Exporter {
 	}
 
 	protected void setupDatabase() throws SQLException {
-		Statement createTables = this.con.createStatement();
+		Statement setup = this.con.createStatement();
 
-		createTables.addBatch("PRAGMA foreign_keys = ON;");
-		createTables.addBatch("CREATE TABLE IF NOT EXISTS articles (id INTEGER PRIMARY KEY, "
+		setup.addBatch("CREATE TABLE IF NOT EXISTS articles (id INTEGER PRIMARY KEY, "
 				+ "url TEXT UNIQUE NOT NULL, title TEXT NOT NULL, subtitle TEXT, "
 				+ "publicationDate DATETIME, fullText TEXT, fullTextHTML TEXT, source TEXT);");
-		createTables
+		setup
 				.addBatch("CREATE TABLE IF NOT EXISTS article_keywords (id INTEGER PRIMARY KEY, "
 						+ "keyword TEXT, article_id INTEGER REFERENCES articles (id) "
 						+ "DEFERRABLE INITIALLY DEFERRED)");
-		createTables.addBatch("DELETE FROM articles;");
-		createTables.addBatch("DELETE FROM article_keywords;");
+		setup.addBatch("DELETE FROM articles;");
+		setup.addBatch("DELETE FROM article_keywords;");
 
-		createTables.executeBatch();
+		setup.executeBatch();
 		this.con.commit();
 
+		// Cannot be set within transaction
 		this.con.setAutoCommit(true);
-		createTables.execute("VACUUM;");
+		setup.execute("VACUUM;");
+		setup.execute("PRAGMA foreign_keys = ON;");
 		this.con.setAutoCommit(false);
 	}
 
@@ -151,10 +152,10 @@ public class Exporter {
 		}
 
 		List<DataSource> sources = new ArrayList<DataSource>();
-		sources.add(DataSource.SPIEGELONLINE);
+		sources.add(DataSource.SPIEGEL);
 
 		Map<DataSource, Map<String, Article>> articles = Wrapper.searchArticles(keywords, fromDate,
-				toDate , sources );
+				toDate /*, sources*/ );
 
 		try {
 			Exporter export = new Exporter(articles);
