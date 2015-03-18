@@ -25,8 +25,13 @@ public class ZeitArticle extends Article {
 		Document doc = Jsoup.connect(this.url).timeout(60000).get();
 		Element articleBody = doc.select(".article-body").first();
 
-		this.fullText = articleBody.text();
-		this.fullTextHTML = articleBody.html();
+		if (articleBody != null && articleBody.childNodeSize() > 0) {
+			this.fullText = articleBody.text();
+			this.fullTextHTML = articleBody.html();
+		}
+		else {
+			this.log.warning("Unable to retrieve ZEIT article fullText for url " + this.url);
+		}
 	}
 
 }

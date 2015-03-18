@@ -59,36 +59,46 @@ public abstract class ScrapedArticle extends Article {
 	public void populateData() throws IOException {
 		this.log.finest(Thread.currentThread() + " starts populating article data for " + this.url);
 
-		Document doc = Jsoup.connect(this.url).timeout(60000).get();
+		try {
+			Document doc = Jsoup.connect(this.url).timeout(60000).get();
 
-		// Populate fields
-		if (this.subtitle == null) {
-			this.subtitle = this.getSubtitleFromDocument(doc);
-		}
-
-		if (this.fullText == null) {
-			this.fullText = this.getFullTextFromDocument(doc);
-		}
-
-		if (this.fullTextHTML == null) {
-			this.fullTextHTML = this.getFullTextHTMLFromDocument(doc);
-		}
-
-		if (this.publicationDate == null) {
-			try {
-				this.publicationDate = this.getPublicationDateFromDocument(doc);
+			// Populate fields
+			if (this.subtitle == null) {
+				this.subtitle = this.getSubtitleFromDocument(doc);
 			}
-			catch (ParseException e) {
-				// In case of failure: set publicationDate to 0001-01-01
-				// 00:00:00 (GMT)
-				this.publicationDate = new Date(-62167392000000L);
-				this.log.warning("Unable to parse date for article with url " + this.url
-						+ ", set to default date (0001-01-01 00:00:00 GMT)");
-				// e.printStackTrace();
+
+			if (this.fullText == null) {
+				this.fullText = this.getFullTextFromDocument(doc);
+			}
+
+			if (this.fullTextHTML == null) {
+				this.fullTextHTML = this.getFullTextHTMLFromDocument(doc);
+			}
+
+			if (this.publicationDate == null) {
+				try {
+					this.publicationDate = this.getPublicationDateFromDocument(doc);
+				}
+				catch (ParseException e) {
+					// In case of parsing failure: set publicationDate to
+					// 0001-01-01 00:00:00 (GMT)
+					this.publicationDate = new Date(-62167392000000L);
+					this.log.warning("Unable to parse publication date for article with url "
+							+ this.url + ", set to default date (0001-01-01 00:00:00 GMT)");
+				}
 			}
 		}
+		catch (IOException e) {
+			// In case of any error: set set publicationDate to 0001-01-01
+			// 00:00:00 (GMT)
+			this.publicationDate = new Date(-62167392000000L);
+			this.log.warning("Unable to connect to " + this.url
+					+ ", populating article data failed, set publication date to default "
+					+ "(0001-01-01 00:00:00 GMT): " + e.getLocalizedMessage());
+		}
 
-		this.log.finest(Thread.currentThread() + " finished populating article data for " + this.url);
+		this.log.finest(Thread.currentThread() + " finished populating article data for "
+				+ this.url);
 	}
 
 	/**
