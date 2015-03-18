@@ -5,6 +5,7 @@ import fetchers.*;
 public enum DataSource {
 	GUARDIAN("The Guardian", new GuardianFetcher()),
 	SPIEGELONLINE("Spiegel Online", new SpiegelOnlineScraper()),
+	SPIEGEL("Der Spiegel", new SpiegelScraper()),
 	TELEGRAPH("The Telegraph", new TelegraphScraper()),
 	ZEIT("Die Zeit", new ZeitFetcher()),
 	TAGESSPIEGEL("Der Tagesspiegel", new TagesspiegelScraper())

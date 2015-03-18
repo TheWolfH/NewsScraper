@@ -33,7 +33,7 @@ public class SpiegelOnlineScraper extends Scraper {
 		sb.append(formatter.format(toDate));		
 		
 		sb.append("&pageNumber=");
-		sb.append((int) offset / limit);
+		sb.append(((int) offset / limit) + 1);
 
 		sb.append("&offsets=");
 		sb.append(offset);
