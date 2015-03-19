@@ -133,13 +133,13 @@ public class Exporter {
 		}
 
 		Date start = new Date();
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 		Date fromDate = null;
 		Date toDate = null;
 		try {
-			fromDate = format.parse(args[0]);// format.parse("2013-01-01");
-			toDate = format.parse(args[1]);// format.parse("2014-12-31");
+			fromDate = format.parse(args[0] + " 00:00:00");// format.parse("2013-01-01");
+			toDate = format.parse(args[1] + " 23:59:59");// format.parse("2014-12-31");
 		}
 		catch (ParseException e) {
 			e.printStackTrace();
@@ -152,10 +152,10 @@ public class Exporter {
 		}
 
 		List<DataSource> sources = new ArrayList<DataSource>();
-		sources.add(DataSource.STERN);
+		sources.add(DataSource.MIRROR);
 
 		Map<DataSource, Map<String, Article>> articles = Wrapper.searchArticles(keywords, fromDate,
-				toDate /*, sources */);
+				toDate /*, sources*/ );
 
 		try {
 			Exporter export = new Exporter(articles);

@@ -56,6 +56,7 @@ public abstract class ScrapedArticle extends Article {
 	 *             in case of any problems fetching the HTML document from the
 	 *             server
 	 */
+	@Override
 	public void populateData() throws IOException {
 		this.log.finest(Thread.currentThread() + " starts populating article data for " + this.url);
 

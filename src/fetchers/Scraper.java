@@ -108,7 +108,7 @@ public abstract class Scraper extends Fetcher {
 					}
 
 					// Call hook if less articles are found than expected
-					// Hook returns true if loop is to be aborted
+					// Hook returns true if loop should be aborted
 					if (articleElements.size() < limit) {
 						if (this.lessArticlesThanExpectedHook(articlesPerPage,
 								articleElements.size(), keyword)) {
