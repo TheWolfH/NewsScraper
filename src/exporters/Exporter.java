@@ -23,7 +23,7 @@ import articles.Article;
 public class Exporter {
 	protected Connection con;
 	protected Map<DataSource, Map<String, Article>> result;
-	protected final Logger log = LoggerGenerator.getLoggerGenerator().getLogger();
+	protected final Logger log = LoggerGenerator.getLogger();
 
 	public Exporter(Map<DataSource, Map<String, Article>> result) throws SQLException {
 		this.result = result;

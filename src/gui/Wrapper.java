@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 import articles.Article;
 
 public class Wrapper {
-	protected static final Logger log = LoggerGenerator.getLoggerGenerator().getLogger();
+	protected static final Logger log = LoggerGenerator.getLogger();
 
 	protected Wrapper() {
 

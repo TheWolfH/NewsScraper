@@ -56,7 +56,7 @@ public abstract class Article {
 	 * Internal logging utility. Can and should be used by subclasses to provide
 	 * feedback to the user in case of any errors.
 	 */
-	protected final Logger log = LoggerGenerator.getLoggerGenerator().getLogger();
+	protected final Logger log = LoggerGenerator.getLogger();
 
 	/**
 	 * Constructs an Article object, setting the {@code url} and {@code title}
