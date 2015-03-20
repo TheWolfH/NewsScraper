@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
+import filters.PrePopulatingArticleFilter;
+import filters.URLSuffixFilter;
 import articles.Article;
 import articles.MirrorArticle;
 
@@ -68,6 +70,14 @@ public class MirrorScraper extends Scraper {
 		sb.append("desc");
 
 		return sb.toString();
+	}
+
+	// Provide filter preventing useless articles whose URL end with ".ece"
+	// (e.g. http://www.mirror.co.uk/incoming/article2038719.ece) from being
+	// regarded
+	@Override
+	protected PrePopulatingArticleFilter getPrePopulatingArticleFilter() {
+		return new URLSuffixFilter(".ece");
 	}
 
 }

@@ -1,5 +1,7 @@
 package fetchers;
 
+import filters.PostPopulatingArticleFilter;
+import filters.PrePopulatingArticleFilter;
 import helpers.LoggerGenerator;
 
 import java.util.Date;
@@ -13,6 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import articles.Article;
 
@@ -105,6 +108,113 @@ public abstract class Fetcher {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	protected Map<String, Article> processArticles(Map<String, Article> articles) {
+		this.log.info("Start processing articles for base url " + this.baseURL);
+
+		// Filter articles by URL in order not to populate undesired articles
+		// (save network calls)
+		this.log.fine("Number of articles before PrePopulatingFilter: " + articles.size());
+		articles = this.applyPrePopulatingFilter(articles);
+		this.log.fine("Number of articles after PrePopulatingFilter: " + articles.size());
+
+		// Populate articles with additional data
+		this.log.info("Start populating article data for base url " + this.baseURL);
+		this.populateArticleData(articles);
+		this.log.info("Finished populating article data for base url " + this.baseURL);
+
+		// Filter articles by all properties
+		this.log.fine("Number of articles before PostPopulatingFilter: " + articles.size());
+		articles = this.applyPostPopulatingFilter(articles);
+		this.log.fine("Number of articles after PostPopulatingFilter: " + articles.size());
+
+		// Return articles
+		this.log.info("Finished processing article for base url " + this.baseURL
+				+ ", returning articles");
+		return articles;
+	}
+
+	/**
+	 * This method is called by {@link #processArticles(Map)} after collecting
+	 * articles, but before populating them. It uses the
+	 * PrePopulatingArticleFilter provided by
+	 * {@link #getPrePopulatingArticleFilter()} to filter out undesired articles
+	 * based on their URL. By default, {@link #getPrePopulatingArticleFilter()}
+	 * returns {@code null} so that the articles are not filtered.
+	 * 
+	 * @param articles
+	 *            the articles collected by
+	 *            {@link #searchArticles(String[], Date, Date, int)}
+	 * @return the desired articles to be populated
+	 */
+	protected Map<String, Article> applyPrePopulatingFilter(Map<String, Article> articles) {
+		PrePopulatingArticleFilter filter = this.getPrePopulatingArticleFilter();
+
+		// null returned: no filtering
+		if (filter == null) {
+			return articles;
+		}
+
+		// Get all keys (URLs) from the article map, apply provided filter, then
+		// use remaining URLs to get the respective Article objects from
+		// the old map in order to build the new map, which is then returned
+		return articles.keySet().parallelStream().filter(filter)
+				.collect(Collectors.toMap(url -> url, url -> articles.get(url)));
+	}
+
+	/**
+	 * Returns the PrePopulatingArticleFilter used by
+	 * {@link #applyPrePopulatingFilter(Map)}. By default, {@code null} is
+	 * returned so that no filter is applied. Can be overridden by subclasses to
+	 * enable filtering based on the URL of the article.
+	 * 
+	 * @return the PrePopulatingArticleFilter used to filter out undesired
+	 *         articles
+	 */
+	protected PrePopulatingArticleFilter getPrePopulatingArticleFilter() {
+		return null;
+	}
+
+	/**
+	 * This method is called by {@link #processArticles(Map)} after populating
+	 * all collected articles, but before returning them. It uses the
+	 * PostPopulatingArticleFilter provided by
+	 * {@link #getPostPopulatingArticleFilter()} to filter out undesired
+	 * articles based on their properties. By default,
+	 * {@link #getPostPopulatingArticleFilter()} returns {@code null} so that
+	 * the articles are not filtered.
+	 * 
+	 * @param articles
+	 *            the articles collected by
+	 *            {@link #searchArticles(String[], Date, Date, int)}
+	 * @return the desired articles
+	 */
+	protected Map<String, Article> applyPostPopulatingFilter(Map<String, Article> articles) {
+		PostPopulatingArticleFilter filter = this.getPostPopulatingArticleFilter();
+
+		// null returned: no filtering
+		if (filter == null) {
+			return articles;
+		}
+
+		// Get all Map.Entry objects from the article map, apply provided
+		// filter, then build new map, which is then returned
+		return articles.entrySet().parallelStream().filter(filter)
+				.collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue()));
+	}
+
+	/**
+	 * Returns the PostPopulatingArticleFilter used by
+	 * {@link #applyPostPopulatingFilter(Map)}. By default, {@code null} is
+	 * returned so that no filter is applied. Can be overridden by subclasses to
+	 * enable filtering based on the URL of the article.
+	 * 
+	 * @return the PostPopulatingArticleFilter used to filter out undesired
+	 *         articles
+	 */
+	protected PostPopulatingArticleFilter getPostPopulatingArticleFilter() {
+		return null;
 	}
 
 	/**

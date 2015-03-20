@@ -126,14 +126,9 @@ public abstract class Scraper extends Fetcher {
 		}
 
 		this.log.info("Finished scraping base url " + this.baseURL);
-		this.log.info("Start populating article data for base url " + this.baseURL);
 
-		this.populateArticleData(articles);
-
-		this.log.info("Finished populating article data for base url " + this.baseURL
-				+ ", returning articles");
-
-		return articles;
+		// Process articles by filtering and populating, then return
+		return this.processArticles(articles);
 	}
 
 	/**
@@ -309,5 +304,4 @@ public abstract class Scraper extends Fetcher {
 	 * @return the selector used to identify the article title
 	 */
 	protected abstract String getTitleSelector();
-
 }

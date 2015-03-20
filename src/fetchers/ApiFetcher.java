@@ -9,6 +9,7 @@ import java.util.Map;
 
 import results.ApiResult;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 
@@ -128,24 +129,25 @@ public abstract class ApiFetcher extends Fetcher {
 						}
 					}
 				}
+				catch (JsonProcessingException e) {
+					// Problem when processing JSON output (malformed JSON or
+					// JSON objects could not be mapped to object): Call hook
+					// method which returns true if loop should be aborted
+					// TODO
+				}
 				catch (IOException e) {
-					// TODO Auto-generated catch block
+					// Low-level I/O exception (timeout etc.) - no sensible way
+					// to handle here
 					this.log.severe("IOException when processing url "
 							+ this.getSearchURL(keyword, fromDate, toDate, offset, limit) + ": "
 							+ e.getMessage());
-					// e.printStackTrace();
 				}
 			} while (offset + limit < result.getNumArticles());
 		}
 
 		this.log.info("Finished fetching base url " + this.baseURL);
-		this.log.info("Start populating article data for base url " + this.baseURL);
-
-		this.populateArticleData(articles);
-
-		this.log.info("Finished populating article data for base url " + this.baseURL
-				+ ", returning articles");
-
-		return articles;
+		
+		// Process articles by filtering and populating, then return
+		return this.processArticles(articles);
 	}
 }
