@@ -21,7 +21,7 @@ public class ZeitFetcher extends ApiFetcher {
 
 	@Override
 	protected String getSearchURL(String keyword, Date fromDate, Date toDate, int offset, int limit) {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		StringBuilder sb = new StringBuilder(this.baseURL);
 
 		// Keyword

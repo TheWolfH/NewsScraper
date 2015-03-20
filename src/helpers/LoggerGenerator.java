@@ -19,11 +19,11 @@ public class LoggerGenerator {
 				// Get config in order to set logging level
 				Level level;
 				try {
-				level = Level.parse(ConfigReader.getConfig().getProperty(
-						"General.logging.level"));
+					level = Level.parse(ConfigReader.getConfig().getProperty(
+							"General.logging.level"));
 				}
 				catch (NullPointerException | IllegalArgumentException e) {
-					level = Level.ALL;
+					level = Level.INFO;
 				}
 
 				// Configure handler
