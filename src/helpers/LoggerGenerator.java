@@ -16,23 +16,34 @@ public class LoggerGenerator {
 	public static Logger getLogger() {
 		if (logger == null) {
 			try {
+				// Get config in order to set logging level
+				Level level;
+				try {
+				level = Level.parse(ConfigReader.getConfig().getProperty(
+						"General.logging.level"));
+				}
+				catch (NullPointerException | IllegalArgumentException e) {
+					level = Level.ALL;
+				}
+
 				// Configure handler
 				Handler handler = new FileHandler("log.txt", false);
 				handler.setEncoding("UTF-8");
 				handler.setFormatter(new SimpleFormatter());
-				handler.setLevel(Level.ALL);
+				handler.setLevel(level);
 
 				// Create logger and add handler to it
 				logger = Logger.getLogger("Log");
 				logger.addHandler(handler);
 				logger.setUseParentHandlers(false);
+				logger.setLevel(level);
 			}
 			catch (IOException e) {
 				// As no logging to file is possible, print stack trace
 				e.printStackTrace();
 			}
 		}
-		
+
 		return logger;
 	}
 }

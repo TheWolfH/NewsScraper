@@ -2,6 +2,7 @@ package fetchers;
 
 import filters.PostPopulatingArticleFilter;
 import filters.PrePopulatingArticleFilter;
+import helpers.ConfigReader;
 import helpers.LoggerGenerator;
 
 import java.util.Date;
@@ -64,7 +65,9 @@ public abstract class Fetcher {
 	 */
 	protected void populateArticleData(Map<String, Article> articles) {
 		// ExecutorService to asynchronously get article fullTexts
-		ExecutorService fullTextFetcher = Executors.newFixedThreadPool(32);
+		int numThreads = Integer.parseInt(ConfigReader.getConfig().getProperty(
+				"Fetcher.populateArticleData.numThreads", "32"));
+		ExecutorService fullTextFetcher = Executors.newFixedThreadPool(numThreads);
 		Set<Future<Void>> futures = new HashSet<Future<Void>>();
 
 		// Iterate over all articles found and asynchronously populate fullText
