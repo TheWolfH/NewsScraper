@@ -1,6 +1,7 @@
 package exporters;
 
 import gui.Wrapper;
+import helpers.ConfigReader;
 import helpers.DataSource;
 import helpers.LoggerGenerator;
 
@@ -42,10 +43,9 @@ public class Exporter {
 		setup.addBatch("CREATE TABLE IF NOT EXISTS articles (id INTEGER PRIMARY KEY, "
 				+ "url TEXT UNIQUE NOT NULL, title TEXT NOT NULL, subtitle TEXT, "
 				+ "publicationDate DATETIME, fullText TEXT, fullTextHTML TEXT, source TEXT);");
-		setup
-				.addBatch("CREATE TABLE IF NOT EXISTS article_keywords (id INTEGER PRIMARY KEY, "
-						+ "keyword TEXT, article_id INTEGER REFERENCES articles (id) "
-						+ "DEFERRABLE INITIALLY DEFERRED)");
+		setup.addBatch("CREATE TABLE IF NOT EXISTS article_keywords (id INTEGER PRIMARY KEY, "
+				+ "keyword TEXT, article_id INTEGER REFERENCES articles (id) "
+				+ "DEFERRABLE INITIALLY DEFERRED)");
 		setup.addBatch("DELETE FROM articles;");
 		setup.addBatch("DELETE FROM article_keywords;");
 
@@ -84,10 +84,13 @@ public class Exporter {
 			// Iterate over articles, insert into database
 			for (Article article : articles.values()) {
 				// TODO decide how to handle "incomplete" article objects
+				Date publicationDate = article.getPublicationDate();
+
 				insertArticle.setString(1, article.getUrl());
 				insertArticle.setString(2, article.getTitle());
 				insertArticle.setString(3, article.getSubtitle());
-				insertArticle.setString(4, formatter.format(article.getPublicationDate()));
+				insertArticle.setString(4,
+						(publicationDate == null ? null : formatter.format(publicationDate)));
 				insertArticle.setString(5, article.getFullText());
 				insertArticle.setString(6, article.getFullTextHTML());
 				insertArticle.setString(7, source.getName());
@@ -151,11 +154,23 @@ public class Exporter {
 			keywords[i - 2] = args[i];
 		}
 
-		List<DataSource> sources = new ArrayList<DataSource>();
-		sources.add(DataSource.MIRROR);
+		String usedDataSources = ConfigReader.getConfig().getProperty(
+				"General.DataSource.usedDataSources");
+		Map<DataSource, Map<String, Article>> articles;
 
-		Map<DataSource, Map<String, Article>> articles = Wrapper.searchArticles(keywords, fromDate,
-				toDate /*, sources*/ );
+		if (usedDataSources.equals("ALL")) {
+			articles = Wrapper.searchArticles(keywords, fromDate, toDate);
+		}
+		else {
+			List<DataSource> sources = new ArrayList<DataSource>();
+
+			for (String usedDataSource : usedDataSources.split(",\\s+")) {
+				DataSource source = DataSource.valueOf(usedDataSource);
+				sources.add(source);
+			}
+
+			articles = Wrapper.searchArticles(keywords, fromDate, toDate, sources);
+		}
 
 		try {
 			Exporter export = new Exporter(articles);
