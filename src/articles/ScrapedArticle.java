@@ -44,7 +44,8 @@ public abstract class ScrapedArticle extends Article {
 	 * All fields except for url and title are populated by first fetching the
 	 * article content from the server, parsing it into {@link #document} and
 	 * then extracting the relevant data using the {@code getXYZFromDocument()}
-	 * methods.
+	 * methods. If any String value obtained from these methods is empty
+	 * (string.length() == 0), {@code null} is set instead of the empty string.
 	 * 
 	 * Can be overridden in subclasses if different behavior is necessary.
 	 * Should only be overridden if for some reason it is not necessary to fetch
@@ -59,21 +60,29 @@ public abstract class ScrapedArticle extends Article {
 	@Override
 	public void populateData() throws IOException {
 		this.log.finest(Thread.currentThread() + " starts populating article data for " + this.url);
+		
+		// Perform hook method
+		this.beforePopulatingDataHook();
+		System.out.println(new Date().getSeconds());
 
 		try {
 			Document doc = Jsoup.connect(this.url).timeout(60000).get();
+			String value;
 
 			// Populate fields
 			if (this.subtitle == null) {
-				this.subtitle = this.getSubtitleFromDocument(doc);
+				value = this.getSubtitleFromDocument(doc);
+				this.subtitle = (value.length() == 0 ? null : value);
 			}
 
 			if (this.fullText == null) {
-				this.fullText = this.getFullTextFromDocument(doc);
+				value = this.getFullTextFromDocument(doc);
+				this.fullText = (value.length() == 0 ? null : value);
 			}
 
 			if (this.fullTextHTML == null) {
-				this.fullTextHTML = this.getFullTextHTMLFromDocument(doc);
+				value = this.getFullTextHTMLFromDocument(doc);
+				this.fullTextHTML = (value.length() == 0 ? null : value);
 			}
 
 			if (this.publicationDate == null) {
@@ -81,23 +90,23 @@ public abstract class ScrapedArticle extends Article {
 					this.publicationDate = this.getPublicationDateFromDocument(doc);
 				}
 				catch (ParseException e) {
-					// In case of parsing failure: set publicationDate to
-					// 0001-01-01 00:00:00 (GMT)
-					this.publicationDate = new Date(-62167392000000L);
+					// In case of parsing failure: publicationDate stays null,
+					// log warning
 					this.log.warning("Unable to parse publication date for article with url "
-							+ this.url + ", set to default date (0001-01-01 00:00:00 GMT)");
+							+ this.url);
 				}
 			}
 		}
 		catch (IOException e) {
-			// In case of any error: set set publicationDate to 0001-01-01
-			// 00:00:00 (GMT)
-			this.publicationDate = new Date(-62167392000000L);
+			// In case of any error: log warning
 			this.log.warning("Unable to connect to " + this.url
-					+ ", populating article data failed, set publication date to default "
-					+ "(0001-01-01 00:00:00 GMT): " + e.getLocalizedMessage());
+					+ ", populating article data failed: " + e.getLocalizedMessage());
 		}
 
+		// Perform hook method
+		this.afterPopulatingDataHook();
+
+		// Debugging log entry
 		this.log.finest(Thread.currentThread() + " finished populating article data for "
 				+ this.url);
 	}
@@ -173,6 +182,29 @@ public abstract class ScrapedArticle extends Article {
 
 		String dateString = doc.select(this.getPublicationDateSelector()).text();
 		return dateFormatter.parse(dateString);
+	}
+
+	/**
+	 * This method is called by {@link #populateData()} before fetching the
+	 * article content and populating the article data. By default, it does not
+	 * perform any actions, but subclasses can override this method. This might
+	 * for example be used to artificially slow down the concurrent execution of
+	 * that method to keep requests from being denied due to an excess of
+	 * requests per second.
+	 */
+	protected void beforePopulatingDataHook() {
+
+	}
+
+	/**
+	 * This method is called by {@link #populateData()} after fetching the
+	 * article content and populating the article data, just before returning.
+	 * By default, it does not perform any actions, but subclasses can override
+	 * this method. This might for example be used to perform plausibility
+	 * checks on the fetched values.
+	 */
+	protected void afterPopulatingDataHook() {
+
 	}
 
 	/**
