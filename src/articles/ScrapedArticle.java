@@ -31,7 +31,7 @@ public abstract class ScrapedArticle extends Article {
 	 *            the url of the article
 	 * @param title
 	 *            the title (headline) of the article
-	 * @param keywords
+	 * @param keyword
 	 *            the keywords to add to the keywords set
 	 */
 	public ScrapedArticle(String url, String title, String keyword) {
@@ -42,17 +42,16 @@ public abstract class ScrapedArticle extends Article {
 	 * Template method populating all empty properties of this article.
 	 * 
 	 * All fields except for url and title are populated by first fetching the
-	 * article content from the server, parsing it into {@link #document} and
-	 * then extracting the relevant data using the {@code getXYZFromDocument()}
-	 * methods. If any String value obtained from these methods is empty
-	 * (string.length() == 0), {@code null} is set instead of the empty string.
+	 * article content from the server, parsing it and then extracting the
+	 * relevant data using the {@code getXYZFromDocument(Document)} methods. If
+	 * any String value obtained from these methods is empty (string.length() ==
+	 * 0), {@code null} is set instead of the empty string.
 	 * 
 	 * Can be overridden in subclasses if different behavior is necessary.
 	 * Should only be overridden if for some reason it is not necessary to fetch
 	 * the article content from the respective server. In all other cases, the
 	 * {@code getXYZFromDocument()} methods should be overridden.
 	 * 
-	 * @return void
 	 * @throws IOException
 	 *             in case of any problems fetching the HTML document from the
 	 *             server
@@ -60,7 +59,7 @@ public abstract class ScrapedArticle extends Article {
 	@Override
 	public void populateData() throws IOException {
 		this.log.finest(Thread.currentThread() + " starts populating article data for " + this.url);
-		
+
 		// Perform hook method
 		this.beforePopulatingDataHook();
 		System.out.println(new Date().getSeconds());
@@ -113,7 +112,7 @@ public abstract class ScrapedArticle extends Article {
 
 	/**
 	 * Template method returning the subtitle of this article by applying the
-	 * selector provided by {@link #getSubtitleSelector()} on {@link #document}
+	 * selector provided by {@link #getSubtitleSelector()} on {@code doc}
 	 * and extracting all text in the matched element(s).
 	 * 
 	 * Can be overridden in subclasses if different behavior is necessary.
@@ -129,8 +128,8 @@ public abstract class ScrapedArticle extends Article {
 
 	/**
 	 * Template method returning the complete text of this article by applying
-	 * the selector provided by {@link #getFullTextSelector()} on
-	 * {@link #document} and extracting all text in the matched element(s).
+	 * the selector provided by {@link #getFullTextSelector()} on {@code doc}
+	 * and extracting all text in the matched element(s).
 	 * 
 	 * Can be overridden in subclasses if different behavior is necessary.
 	 * 
@@ -146,7 +145,7 @@ public abstract class ScrapedArticle extends Article {
 	/**
 	 * Template method returning the HTML of the complete text of this article
 	 * by applying the selector provided by {@link #getFullTextSelector()} on
-	 * {@link #document} and extracting all HTML in the matched element(s).
+	 * {@code doc} and extracting all HTML in the matched element(s).
 	 * 
 	 * Can be overridden in subclasses if different behavior is necessary.
 	 * 
@@ -162,11 +161,10 @@ public abstract class ScrapedArticle extends Article {
 	/**
 	 * Template method returning the date of publication of this article by
 	 * applying the selector provided by {@link #getPublicationDateSelector()}
-	 * on {@link #document} and extracting all text in the matched element(s).
-	 * This text is then parsed by a {@link java.text.SimpleDateFormat}
-	 * initialized with the format string provided by
-	 * {@link #getPublicationDateFormat()} and the locale provided by
-	 * {@link #getLocale()}.
+	 * on {@code doc} and extracting all text in the matched element(s). This
+	 * text is then parsed by a {@link java.text.SimpleDateFormat} initialized
+	 * with the format string provided by {@link #getPublicationDateFormat()}
+	 * and the locale provided by {@link #getLocale()}.
 	 * 
 	 * Can be overridden in subclasses if different behavior is necessary.
 	 * 
@@ -175,6 +173,10 @@ public abstract class ScrapedArticle extends Article {
 	 * 
 	 * @return the publication date of this article as a {@link java.util.Date}
 	 *         object
+	 * 
+	 * @throws ParseException
+	 *             if the text selected as described above cannot be parsed by
+	 *             the SimpleDateFormat generated as described above
 	 */
 	protected Date getPublicationDateFromDocument(Document doc) throws ParseException {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat(this.getPublicationDateFormat(),

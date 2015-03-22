@@ -29,7 +29,7 @@ import articles.Article;
  * methods provided. The exact methods to be implemented vary on whether the
  * provider's articles are accessed via a dedicated API (ApiFetcher) or by
  * leveraging the site's common search functionality (Scraper). The provided
- * {@link #populateArticleData(Set)} is leveraged by the
+ * {@link #populateArticleData(Map)} is leveraged by the
  * {@code searchArticles(...)} methods pre-defined in the direct subclasses, but
  * can also be used when implementing your own version of
  * {@link #searchArticles(String[], Date, Date)}.
@@ -148,7 +148,7 @@ public abstract class Fetcher {
 	 * 
 	 * @param articles
 	 *            the articles collected by
-	 *            {@link #searchArticles(String[], Date, Date, int)}
+	 *            {@link #searchArticles(String[], Date, Date)}
 	 * @return the desired articles to be populated
 	 */
 	protected Map<String, Article> applyPrePopulatingFilter(Map<String, Article> articles) {
@@ -190,7 +190,7 @@ public abstract class Fetcher {
 	 * 
 	 * @param articles
 	 *            the articles collected by
-	 *            {@link #searchArticles(String[], Date, Date, int)}
+	 *            {@link #searchArticles(String[], Date, Date)}
 	 * @return the desired articles
 	 */
 	protected Map<String, Article> applyPostPopulatingFilter(Map<String, Article> articles) {

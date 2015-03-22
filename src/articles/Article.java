@@ -46,7 +46,7 @@ public abstract class Article {
 	 * actual article content.
 	 */
 	protected String fullTextHTML;
-	
+
 	/**
 	 * The keywords this article was found by
 	 */
@@ -118,8 +118,9 @@ public abstract class Article {
 	 * fullTextHTML properties. For articles fetched by scraping, all properties
 	 * except for url and title are fetched here.
 	 * 
-	 * @return void
 	 * @throws IOException
+	 *             in case of any problems fetching the HTML document from the
+	 *             server
 	 */
 	public abstract void populateData() throws IOException;
 

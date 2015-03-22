@@ -18,7 +18,9 @@ public class URLSuffixFilter implements PrePopulatingArticleFilter {
 
 	/**
 	 * Constructs a URLSuffixFilter with the given {@code badSuffixes}.
+	 * 
 	 * @param badSuffixes
+	 *            the suffixes that will lead to a URL being rejected
 	 */
 	public URLSuffixFilter(String... badSuffixes) {
 		this.badSuffixes = badSuffixes;

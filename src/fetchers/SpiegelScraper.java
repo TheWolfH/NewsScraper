@@ -67,18 +67,18 @@ public class SpiegelScraper extends Scraper {
 	}
 
 	/**
-	 * @see {@link Scraper#lessArticlesThanExpectedHook(int, int, String)}
+	 * Call super method for logging, return false so that the current keyword
+	 * loop is not aborted (Spiegel search does not reliably return 20 results
+	 * per page).
 	 * 
-	 *      Call super method for logging, return false so that the current
-	 *      keyword loop is not aborted (Spiegel search does not reliably return
-	 *      20 results per page).
+	 * @see Scraper#lessArticlesThanExpectedHook(int, int, String)
 	 */
 	@Override
 	protected boolean lessArticlesThanExpectedHook(int expectedArticles, int actualArticles,
 			String keyword) {
 		this.log.fine("Found less articles than expected (" + actualArticles + "/"
 				+ expectedArticles + "), continue searching");
-		
+
 		return false;
 	}
 }
