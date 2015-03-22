@@ -1,5 +1,7 @@
 package fetchers;
 
+import helpers.ConfigReader;
+
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,6 +24,23 @@ import articles.Article;
  * 
  */
 public abstract class Scraper extends Fetcher {
+	/**
+	 * The User Agent header to use when performing any HTTP requests. The
+	 * header is read from config.
+	 */
+	protected String userAgent;
+
+	/**
+	 * Constructs a Scraper, setting {@link #userAgent} to the property
+	 * Scraper.searchArticles.userAgent read from config. This constructor must
+	 * be invoked by any subclasses in order to guarantee the correct User Agent
+	 * to bet set.
+	 */
+	public Scraper() {
+		this.userAgent = ConfigReader.getConfig().getProperty("Scraper.searchArticles.userAgent",
+				null);
+	}
+
 	/**
 	 * Template method returning a {@link java.util.Set} of
 	 * {@link articles.Article} objects representing articles that contain one
@@ -77,7 +96,8 @@ public abstract class Scraper extends Fetcher {
 
 					// Parse HTML content
 					String searchUrl = this.getSearchURL(keyword, fromDate, toDate, offset, limit);
-					Document searchResult = Jsoup.connect(searchUrl).timeout(60000).get();
+					Document searchResult = Jsoup.connect(searchUrl).timeout(60000)
+							.userAgent(this.userAgent).get();
 					articleElements = searchResult.select(this.getSearchResultsSelector());
 
 					// Exit loop when no more articles are found

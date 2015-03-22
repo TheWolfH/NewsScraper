@@ -1,5 +1,7 @@
 package articles;
 
+import helpers.ConfigReader;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,7 +13,15 @@ import org.jsoup.nodes.Document;
 
 public abstract class ScrapedArticle extends Article {
 	/**
-	 * Constructs a {@code ScrapedArticle} using the given url and title.
+	 * The User Agent header to use when performing any HTTP requests. The
+	 * header is read from config.
+	 */
+	protected String userAgent;
+
+	/**
+	 * Constructs a {@code ScrapedArticle} using the given url and title and
+	 * setting {@link #userAgent} to the property
+	 * ScrapedArticle.populateData.userAgent read from config.
 	 * 
 	 * @param url
 	 *            the url of the article
@@ -20,12 +30,16 @@ public abstract class ScrapedArticle extends Article {
 	 */
 	public ScrapedArticle(String url, String title) {
 		super(url, title);
+
+		this.userAgent = ConfigReader.getConfig().getProperty(
+				"ScrapedArticle.populateData.userAgent", null);
 	}
 
 	/**
 	 * Constructs a {@code ScrapedArticle}, setting the {@code url} and
-	 * {@code title} properties and adding the {@code keywords} to its keywords
-	 * set.
+	 * {@code title} properties, adding the {@code keywords} to its keywords
+	 * set, and setting {@link #userAgent} to the property
+	 * ScrapedArticle.populateData.userAgent read from config.
 	 * 
 	 * @param url
 	 *            the url of the article
@@ -36,6 +50,9 @@ public abstract class ScrapedArticle extends Article {
 	 */
 	public ScrapedArticle(String url, String title, String keyword) {
 		super(url, title, keyword);
+
+		this.userAgent = ConfigReader.getConfig().getProperty(
+				"ScrapedArticle.populateData.userAgent", null);
 	}
 
 	/**
@@ -64,7 +81,7 @@ public abstract class ScrapedArticle extends Article {
 		this.beforePopulatingDataHook();
 
 		try {
-			Document doc = Jsoup.connect(this.url).timeout(60000).get();
+			Document doc = Jsoup.connect(this.url).timeout(60000).userAgent(this.userAgent).get();
 			String value;
 
 			// Populate fields
@@ -111,8 +128,8 @@ public abstract class ScrapedArticle extends Article {
 
 	/**
 	 * Template method returning the subtitle of this article by applying the
-	 * selector provided by {@link #getSubtitleSelector()} on {@code doc}
-	 * and extracting all text in the matched element(s).
+	 * selector provided by {@link #getSubtitleSelector()} on {@code doc} and
+	 * extracting all text in the matched element(s).
 	 * 
 	 * Can be overridden in subclasses if different behavior is necessary.
 	 * 
@@ -154,7 +171,7 @@ public abstract class ScrapedArticle extends Article {
 	 * @return the complete HTML of this article
 	 */
 	protected String getFullTextHTMLFromDocument(Document doc) {
-		return doc.select(this.getFullTextSelector()).html();
+		return doc.select(this.getFullTextSelector()).outerHtml();
 	}
 
 	/**
