@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 import articles.Article;
 
 /**
- * An interface for filters meant to be applied by {@link Fetcher} objects after
+ * An interface for filters meant to be applied by {@link fetchers.Fetcher} objects after
  * populating the articles, before returning them. As at this point all
  * properties of the article are supposed (but not guaranteed) to be known, so
  * that the filtering can be based on any of the getters provided by the

@@ -62,7 +62,6 @@ public abstract class ScrapedArticle extends Article {
 
 		// Perform hook method
 		this.beforePopulatingDataHook();
-		System.out.println(new Date().getSeconds());
 
 		try {
 			Document doc = Jsoup.connect(this.url).timeout(60000).get();
