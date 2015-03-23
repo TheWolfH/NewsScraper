@@ -21,7 +21,7 @@ public class ZeitArticle extends Article {
 	}
 
 	@Override
-	public void populateData() throws IOException {
+	public synchronized void populateData() throws IOException {
 		Document doc = Jsoup.connect(this.url).timeout(60000).get();
 		Element articleBody = doc.select(".article-body").first();
 

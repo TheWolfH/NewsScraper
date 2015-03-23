@@ -74,48 +74,55 @@ public abstract class ScrapedArticle extends Article {
 	 *             server
 	 */
 	@Override
-	public void populateData() throws IOException {
+	public synchronized void populateData() throws IOException {
 		this.log.finest(Thread.currentThread() + " starts populating article data for " + this.url);
 
 		// Perform hook method
 		this.beforePopulatingDataHook();
 
-		try {
-			Document doc = Jsoup.connect(this.url).timeout(60000).userAgent(this.userAgent).get();
-			String value;
+		// Only perform network call if really necessary
+		if (this.subtitle == null || this.fullText == null || this.fullTextHTML == null
+				|| this.publicationDate == null) {
+			try {
+				Document doc = Jsoup.connect(this.url).timeout(60000).userAgent(this.userAgent)
+						.get();
+				String value;
 
-			// Populate fields
-			if (this.subtitle == null) {
-				value = this.getSubtitleFromDocument(doc);
-				this.subtitle = (value.length() == 0 ? null : value);
-			}
-
-			if (this.fullText == null) {
-				value = this.getFullTextFromDocument(doc);
-				this.fullText = (value.length() == 0 ? null : value);
-			}
-
-			if (this.fullTextHTML == null) {
-				value = this.getFullTextHTMLFromDocument(doc);
-				this.fullTextHTML = (value.length() == 0 ? null : value);
-			}
-
-			if (this.publicationDate == null) {
-				try {
-					this.publicationDate = this.getPublicationDateFromDocument(doc);
+				// Populate fields
+				if (this.subtitle == null) {
+					value = this.getSubtitleFromDocument(doc);
+					this.subtitle = (value.length() == 0 ? null : value);
 				}
-				catch (ParseException e) {
-					// In case of parsing failure: publicationDate stays null,
-					// log warning
-					this.log.warning("Unable to parse publication date for article with url "
-							+ this.url);
+
+				if (this.fullText == null) {
+					value = this.getFullTextFromDocument(doc);
+					this.fullText = (value.length() == 0 ? null : value);
+				}
+
+				if (this.fullTextHTML == null) {
+					value = this.getFullTextHTMLFromDocument(doc);
+					this.fullTextHTML = (value.length() == 0 ? null : value);
+				}
+
+				if (this.publicationDate == null) {
+					try {
+						this.publicationDate = this.getPublicationDateFromDocument(doc);
+					}
+					catch (ParseException e) {
+						// In case of parsing failure: publicationDate stays
+						// null,
+						// log warning
+						this.log.warning("Unable to parse publication date for article with url "
+								+ this.url);
+					}
+
 				}
 			}
-		}
-		catch (IOException e) {
-			// In case of any error: log warning
-			this.log.warning("Unable to connect to " + this.url
-					+ ", populating article data failed: " + e.getLocalizedMessage());
+			catch (IOException e) {
+				// In case of any error: log warning
+				this.log.warning("Unable to connect to " + this.url
+						+ ", populating article data failed: " + e.getLocalizedMessage());
+			}
 		}
 
 		// Perform hook method

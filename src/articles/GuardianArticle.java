@@ -20,7 +20,7 @@ public class GuardianArticle extends Article {
 	}
 
 	@Override
-	public void populateData() throws IOException {
+	public synchronized void populateData() throws IOException {
 		if (this.fields != null) {
 			this.subtitle = this.fields.subtitle;
 			this.fullTextHTML = this.fields.fullTextHTML;
