@@ -3,6 +3,8 @@ package fetchers;
 import java.util.Date;
 import java.util.Map;
 
+import filters.PublicationDateFilter;
+import filters.PostPopulatingArticleFilter;
 import articles.Article;
 import articles.DailyMailArticle;
 
@@ -45,23 +47,30 @@ public class DailyMailScraper extends Scraper {
 	@Override
 	protected String getSearchURL(String keyword, Date fromDate, Date toDate, int offset, int limit) {
 		StringBuilder sb = new StringBuilder(this.baseURL);
-		
+
 		sb.append("&searchPhrase=");
 		sb.append(keyword);
-		
+
 		sb.append("&size=");
 		sb.append(limit);
-		
+
 		sb.append("&offset=");
 		sb.append(offset);
-		
+
 		sb.append("&sort=");
 		sb.append("recent");
-		
+
 		sb.append("&days=");
 		sb.append("all");
-		
+
 		return sb.toString();
 	}
 
+	// Daily Mail does not allow the specification of a date range in their
+	// search query. Therefore, articles must be filtered after fetching the
+	// publication date from the article itself.
+	@Override
+	protected PostPopulatingArticleFilter getPostPopulatingArticleFilter(Date fromDate, Date toDate) {
+		return new PublicationDateFilter(false, fromDate, toDate);
+	}
 }

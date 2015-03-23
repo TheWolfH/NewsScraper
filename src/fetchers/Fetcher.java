@@ -113,7 +113,24 @@ public abstract class Fetcher {
 		}
 	}
 
-	protected Map<String, Article> processArticles(Map<String, Article> articles) {
+	/**
+	 * Processes the passed articles by first filtering them using
+	 * {@link #applyPrePopulatingFilter(Map)}, then calling
+	 * {@link #populateArticleData(Map)} and then filtering again using
+	 * {@link #applyPostPopulatingFilter(Map, Date, Date)}.
+	 * 
+	 * @param articles
+	 *            the articles to process
+	 * @param fromDate
+	 *            the {@code fromDate} parameter that is passed on to
+	 *            {@link #applyPrePopulatingFilter(Map)}
+	 * @param toDate
+	 *            the {@code fromDate} parameter that is passed on to
+	 *            {@link #applyPostPopulatingFilter(Map)}
+	 * @return the processed articles
+	 */
+	protected Map<String, Article> processArticles(Map<String, Article> articles, Date fromDate,
+			Date toDate) {
 		this.log.info("Start processing articles for base url " + this.baseURL);
 
 		// Filter articles by URL in order not to populate undesired articles
@@ -129,7 +146,7 @@ public abstract class Fetcher {
 
 		// Filter articles by all properties
 		this.log.fine("Number of articles before PostPopulatingFilter: " + articles.size());
-		articles = this.applyPostPopulatingFilter(articles);
+		articles = this.applyPostPopulatingFilter(articles, fromDate, toDate);
 		this.log.fine("Number of articles after PostPopulatingFilter: " + articles.size());
 
 		// Return articles
@@ -139,12 +156,15 @@ public abstract class Fetcher {
 	}
 
 	/**
-	 * This method is called by {@link #processArticles(Map)} after collecting
-	 * articles, but before populating them. It uses the
+	 * This method is called by {@link #processArticles(Map, Date, Date)} after
+	 * collecting articles, but before populating them. It uses the
 	 * PrePopulatingArticleFilter provided by
 	 * {@link #getPrePopulatingArticleFilter()} to filter out undesired articles
 	 * based on their URL. By default, {@link #getPrePopulatingArticleFilter()}
-	 * returns {@code null} so that the articles are not filtered.
+	 * returns {@code null} so that the articles are not filtered. Subclasses
+	 * can override {@link #getPrePopulatingArticleFilter()} to, for example,
+	 * filter out articles with specific URL suffixes using a
+	 * {@link filters.URLSuffixFilter}.
 	 * 
 	 * @param articles
 	 *            the articles collected by
@@ -180,21 +200,32 @@ public abstract class Fetcher {
 	}
 
 	/**
-	 * This method is called by {@link #processArticles(Map)} after populating
-	 * all collected articles, but before returning them. It uses the
+	 * This method is called by {@link #processArticles(Map, Date, Date)} after
+	 * populating all collected articles, but before returning them. It uses the
 	 * PostPopulatingArticleFilter provided by
-	 * {@link #getPostPopulatingArticleFilter()} to filter out undesired
-	 * articles based on their properties. By default,
-	 * {@link #getPostPopulatingArticleFilter()} returns {@code null} so that
-	 * the articles are not filtered.
+	 * {@link #getPostPopulatingArticleFilter(Date, Date)} to filter out
+	 * undesired articles based on their properties. By default,
+	 * {@link #getPostPopulatingArticleFilter(Date, Date)} returns {@code null}
+	 * so that the articles are not filtered. Subclasses can override
+	 * {@link #getPostPopulatingArticleFilter(Date, Date)} to, for example,
+	 * filter out articles with certain publication dates. This is particularly
+	 * useful with data sources that do not allow the specification of a valid
+	 * date range in their search queries.
 	 * 
 	 * @param articles
 	 *            the articles collected by
 	 *            {@link #searchArticles(String[], Date, Date)}
+	 * @param fromDate
+	 *            the {@code fromDate} parameter passed to
+	 *            {@link #searchArticles(String[], Date, Date)}
+	 * @param toDate
+	 *            the {@code toDate} parameter passed to
+	 *            {@link #searchArticles(String[], Date, Date)}
 	 * @return the desired articles
 	 */
-	protected Map<String, Article> applyPostPopulatingFilter(Map<String, Article> articles) {
-		PostPopulatingArticleFilter filter = this.getPostPopulatingArticleFilter();
+	protected Map<String, Article> applyPostPopulatingFilter(Map<String, Article> articles,
+			Date fromDate, Date toDate) {
+		PostPopulatingArticleFilter filter = this.getPostPopulatingArticleFilter(fromDate, toDate);
 
 		// null returned: no filtering
 		if (filter == null) {
@@ -209,14 +240,21 @@ public abstract class Fetcher {
 
 	/**
 	 * Returns the PostPopulatingArticleFilter used by
-	 * {@link #applyPostPopulatingFilter(Map)}. By default, {@code null} is
-	 * returned so that no filter is applied. Can be overridden by subclasses to
-	 * enable filtering based on the URL of the article.
+	 * {@link #applyPostPopulatingFilter(Map, Date, Date)}. By default,
+	 * {@code null} is returned so that no filter is applied. Can be overridden
+	 * by subclasses to enable filtering based on the URL of the article.
+	 * 
+	 * @param fromDate
+	 *            the {@code fromDate} parameter passed to
+	 *            {@link #searchArticles(String[], Date, Date)}
+	 * @param toDate
+	 *            the {@code toDate} parameter passed to
+	 *            {@link #searchArticles(String[], Date, Date)}
 	 * 
 	 * @return the PostPopulatingArticleFilter used to filter out undesired
 	 *         articles
 	 */
-	protected PostPopulatingArticleFilter getPostPopulatingArticleFilter() {
+	protected PostPopulatingArticleFilter getPostPopulatingArticleFilter(Date fromDate, Date toDate) {
 		return null;
 	}
 

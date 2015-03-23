@@ -148,7 +148,7 @@ public abstract class Scraper extends Fetcher {
 		this.log.info("Finished scraping base url " + this.baseURL);
 
 		// Process articles by filtering and populating, then return
-		return this.processArticles(articles);
+		return this.processArticles(articles, fromDate, toDate);
 	}
 
 	/**

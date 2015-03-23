@@ -148,6 +148,6 @@ public abstract class ApiFetcher extends Fetcher {
 		this.log.info("Finished fetching base url " + this.baseURL);
 		
 		// Process articles by filtering and populating, then return
-		return this.processArticles(articles);
+		return this.processArticles(articles, fromDate, toDate);
 	}
 }

@@ -15,7 +15,7 @@ import articles.Article;
  * @author Jan Helge Wolf
  *
  */
-public class InvalidDateFilter implements PostPopulatingArticleFilter {
+public class PublicationDateFilter implements PostPopulatingArticleFilter {
 	/**
 	 * whether to exclude articles with a {@code null} publicationDate (true) or
 	 * not (false)
@@ -33,10 +33,10 @@ public class InvalidDateFilter implements PostPopulatingArticleFilter {
 	protected Date latestDate;
 
 	/**
-	 * Constructs a {@code InvalidDateFilter} with the given properties.
+	 * Constructs a {@code PublicationDateFilter} with the given properties.
 	 * 
 	 * @param filterNull
-	 *            whether to exclude articles with a {@code null}
+	 *            whether to disallow articles with a {@code null}
 	 *            publicationDate (true) or not (false)
 	 * @param earliestDate
 	 *            the earliest accepted date by this filter, or {@code null} to
@@ -45,7 +45,7 @@ public class InvalidDateFilter implements PostPopulatingArticleFilter {
 	 *            the latest accepted date by this filter, or {@code null} to
 	 *            set no latest date
 	 */
-	public InvalidDateFilter(boolean filterNull, Date earliestDate, Date latestDate) {
+	public PublicationDateFilter(boolean filterNull, Date earliestDate, Date latestDate) {
 		this.filterNull = filterNull;
 		this.earliestDate = earliestDate;
 		this.latestDate = latestDate;
@@ -55,7 +55,7 @@ public class InvalidDateFilter implements PostPopulatingArticleFilter {
 	public boolean test(Map.Entry<String, Article> t) {
 		Article article = t.getValue();
 
-		// Disregard null articles (see PostPopulatingArticleFilter
+		// Disallow null articles (see PostPopulatingArticleFilter
 		// documentation)
 		if (article == null) {
 			return false;
