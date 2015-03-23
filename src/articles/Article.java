@@ -11,18 +11,38 @@ import java.util.logging.Logger;
 
 import com.fasterxml.jackson.annotation.*;
 
+/**
+ * This class is the uniform data model of the NewsScraper prototype,
+ * representing a single article. At construction time, both the URL and the
+ * title of the article must be known.
+ * 
+ * Subclasses need to implement the {@link #populateData()} method, which tries
+ * to fill all other properties with the respective values.
+ * 
+ * Concrete articles for data sources processed via scraping will normally
+ * extend the {@link ScrapedArticle} class, which provides a pre-defined
+ * implementation of that method. As this implementation relies on fetching the
+ * article content from the respective server, it might be executed
+ * concurrently. Although no Article object should be processed by more than one
+ * thread at a time, the Article class is designed to be thread-safe in order to
+ * prevent any program errors in case the mentioned guideline is not adhered to.
+ * 
+ * @author Jan Helge Wolf
+ *
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Article {
 	/**
-	 * The url pointing to the web version of this article. Immutable as it is
-	 * used for identification.
+	 * The url pointing to the web version of this article. Final as it is used
+	 * for identification.
 	 */
 	protected final String url;
 
 	/**
-	 * The title (headline) of this article
+	 * The title (headline) of this article. Final as it has to be set at
+	 * construction time and there's no reason to ever change it.
 	 */
-	protected String title;
+	protected final String title;
 
 	/**
 	 * The subtitle (byline) of this article
@@ -48,9 +68,10 @@ public abstract class Article {
 	protected String fullTextHTML;
 
 	/**
-	 * The keywords this article was found by
+	 * The keywords this article was found by. Final as there's no need to ever
+	 * replace it.
 	 */
-	protected Set<String> keywords;
+	protected final Set<String> keywords;
 
 	/**
 	 * Internal logging utility. Can and should be used by subclasses to provide
@@ -114,9 +135,20 @@ public abstract class Article {
 	/**
 	 * Populates all empty properties of this article
 	 * 
-	 * When using an API, this is mainly used to populate the fullText and
-	 * fullTextHTML properties. For articles fetched by scraping, all properties
-	 * except for url and title are fetched here.
+	 * Although only the url and the title are guaranteed to be set at
+	 * construction time, exact behavior of this method depends on the subclass.
+	 * While using an API might provide all relevant fields immediately, in most
+	 * cases it will be necessary to fetch the actual HTML content of the
+	 * article to populate the remaining fields. In the former case, this method
+	 * might not need to perform any actions, while in the latter case it
+	 * fetches the article from the respective server and extracts the relevant
+	 * information from it. In order to save network bandwidth and increase
+	 * performance, subclasses <b>must</b> check whether any of the property of
+	 * this article is still {@code null} before performing any network actions.
+	 * After the the successful returning of this method, all Article properties
+	 * publicly available via getter methods either hold the correct value or
+	 * {@code null}, if no valid value could be retrieved. Empty strings are
+	 * considered invalid values in the sense of the preceding sentence.
 	 * 
 	 * @throws IOException
 	 *             in case of any problems fetching the HTML document from the
@@ -127,50 +159,54 @@ public abstract class Article {
 	/**
 	 * @return the url
 	 */
-	public String getUrl() {
+	public synchronized String getUrl() {
 		return this.url;
 	}
 
 	/**
 	 * @return the title
 	 */
-	public String getTitle() {
+	public synchronized String getTitle() {
 		return this.title;
 	}
 
 	/**
 	 * @return the subtitle
 	 */
-	public String getSubtitle() {
+	public synchronized String getSubtitle() {
 		return this.subtitle;
 	}
 
 	/**
 	 * @return the publicationDate
 	 */
-	public Date getPublicationDate() {
-		return this.publicationDate;
+	public synchronized Date getPublicationDate() {
+		// Return a cloned version of our publication date (or null) in order to
+		// prevent clients from tampering with our publication date
+		return (this.publicationDate == null ? null : (Date) this.publicationDate.clone());
 	}
 
 	/**
 	 * @return the fullText
 	 */
-	public String getFullText() {
+	public synchronized String getFullText() {
 		return this.fullText;
 	}
 
 	/**
 	 * @return the fullTextHTML
 	 */
-	public String getFullTextHTML() {
+	public synchronized String getFullTextHTML() {
 		return this.fullTextHTML;
 	}
 
 	/**
 	 * @return the keywords
 	 */
-	public Set<String> getKeywords() {
-		return this.keywords;
+	public synchronized Set<String> getKeywords() {
+		// Return a new HashSet in order to prevent clients from modifying our
+		// keywords
+		return new HashSet<String>(this.keywords);
 	}
 
 	/**
@@ -179,7 +215,7 @@ public abstract class Article {
 	 * @param keyword
 	 *            the keyword to add
 	 */
-	public void addKeyword(String keyword) {
+	public synchronized void addKeyword(String keyword) {
 		this.keywords.add(keyword);
 	}
 }
