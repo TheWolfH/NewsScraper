@@ -40,13 +40,22 @@ public class Exporter {
 	protected void setupDatabase() throws SQLException {
 		Statement setup = this.con.createStatement();
 
-		setup.addBatch("CREATE TABLE IF NOT EXISTS articles (id INTEGER PRIMARY KEY, "
+		// article table
+		setup.addBatch("CREATE TABLE IF NOT EXISTS article (id INTEGER PRIMARY KEY, "
 				+ "url TEXT UNIQUE NOT NULL, title TEXT NOT NULL, subtitle TEXT, "
 				+ "publicationDate DATETIME, fullText TEXT, fullTextHTML TEXT, source TEXT);");
+		setup.addBatch("CREATE INDEX IF NOT EXISTS article_idx_source ON article (source);");
+		setup.addBatch("CREATE INDEX IF NOT EXISTS article_idx_publicationDate ON article (publicationDate);");
+		
+		// article_keywords table
 		setup.addBatch("CREATE TABLE IF NOT EXISTS article_keywords (id INTEGER PRIMARY KEY, "
-				+ "keyword TEXT, article_id INTEGER REFERENCES articles (id) "
+				+ "keyword TEXT, article_id INTEGER REFERENCES article (id) "
 				+ "DEFERRABLE INITIALLY DEFERRED)");
-		setup.addBatch("DELETE FROM articles;");
+		setup.addBatch("CREATE INDEX IF NOT EXISTS article_keywords_idx_keyword ON article_keywords (keyword);");
+		setup.addBatch("CREATE INDEX IF NOT EXISTS article_keywords_idx_article_id ON article_keywords (article_id);");
+		
+		// Empty tables
+		setup.addBatch("DELETE FROM article;");
 		setup.addBatch("DELETE FROM article_keywords;");
 
 		setup.executeBatch();
@@ -61,7 +70,7 @@ public class Exporter {
 
 	public void readArticles() throws SQLException {
 		// Prepare statement for INSERTing article rows
-		PreparedStatement insertArticle = this.con.prepareStatement("INSERT INTO articles "
+		PreparedStatement insertArticle = this.con.prepareStatement("INSERT INTO article "
 				+ "(url, title, subtitle, publicationDate, fullText, fullTextHTML, source) "
 				+ "VALUES (?, ?, ?, datetime(?), ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 
@@ -130,6 +139,16 @@ public class Exporter {
 	}
 
 	public static void main(String[] args) {
+		System.out.println("Wait for five seconds...");
+		
+		try {
+			Thread.sleep(5000);
+		}
+		catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		if (args.length < 3) {
 			throw new IllegalArgumentException(
 					"At least three arguments (fromDate, toDate, keywords...) expected");
