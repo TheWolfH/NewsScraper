@@ -20,17 +20,18 @@ public class TelegraphScraper extends Scraper {
 
 	@Override
 	protected String getSearchURL(String keyword, Date fromDate, Date toDate, int offset, int limit) {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat fromDateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat toDateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.'999Z'");
 		StringBuilder sb = new StringBuilder(this.baseURL);
 
 		sb.append("&queryText=");
 		sb.append(keyword);
 
 		sb.append("&range=");
-		sb.append(formatter.format(fromDate));
+		sb.append(fromDateFormatter.format(fromDate));
 
 		sb.append("&rangeTo=");
-		sb.append(formatter.format(toDate));
+		sb.append(toDateFormatter.format(toDate));
 		
 		sb.append("&p=");
 		sb.append((int) (offset / limit + 1));

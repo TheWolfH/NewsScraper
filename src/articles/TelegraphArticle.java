@@ -24,7 +24,7 @@ public class TelegraphArticle extends ScrapedArticle {
 
 	@Override
 	protected String getPublicationDateFormat() {
-		return "h:mma z dd MMM YYYY";
+		return "h:mma z dd MMM yyyy";
 	}
 
 	@Override
