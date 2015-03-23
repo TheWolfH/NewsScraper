@@ -126,7 +126,7 @@ public abstract class Fetcher {
 	 *            {@link #applyPrePopulatingFilter(Map)}
 	 * @param toDate
 	 *            the {@code fromDate} parameter that is passed on to
-	 *            {@link #applyPostPopulatingFilter(Map)}
+	 *            {@link #applyPostPopulatingFilter(Map, Date, Date)}
 	 * @return the processed articles
 	 */
 	protected Map<String, Article> processArticles(Map<String, Article> articles, Date fromDate,
