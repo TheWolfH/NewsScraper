@@ -6,7 +6,7 @@ import java.util.Map;
 import articles.Article;
 import articles.TagesspiegelArticle;
 
-public class TagesspiegelScraper extends Scraper {
+public class TagesspiegelScraper extends PredictiveScraper {
 
 	public TagesspiegelScraper() {
 		this.baseURL = "http://www.tagesspiegel.de/suchergebnis/artikel/";

@@ -11,7 +11,8 @@ public enum DataSource {
 	TAGESSPIEGEL("Der Tagesspiegel", new TagesspiegelScraper()),
 	STERN("Stern", new SternScraper()),
 	MIRROR("Mirror", new MirrorScraper()),
-	DAILYMAIL("Daily Mail Online", new DailyMailScraper())
+	DAILYMAIL("Daily Mail Online", new DailyMailScraper()),
+	WELTONLINE("Die Welt Online", new WeltOnlineScraper())
 	/*WELTONLINE("Die Welt Online", new WeltOnlineScraper())*/;
 	
 	private String name;

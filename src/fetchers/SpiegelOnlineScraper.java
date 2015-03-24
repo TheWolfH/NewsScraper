@@ -7,7 +7,7 @@ import java.util.Map;
 import articles.Article;
 import articles.SpiegelOnlineArticle;
 
-public class SpiegelOnlineScraper extends Scraper {
+public class SpiegelOnlineScraper extends PredictiveScraper {
 
 	public SpiegelOnlineScraper() {
 		this.baseURL = "http://www.spiegel.de/suche/index.html?quellenGroup=SPOX";

@@ -7,7 +7,7 @@ import java.util.Map;
 import articles.Article;
 import articles.TelegraphArticle;
 
-public class TelegraphScraper extends Scraper {
+public class TelegraphScraper extends PredictiveScraper {
 
 	public TelegraphScraper() {
 		this.baseURL = "http://www.telegraph.co.uk/template/ver1-0/templates/fragments/otsn/results.jsp?fq[]=type:Article&sort=recent&paging=true&ajax=true";

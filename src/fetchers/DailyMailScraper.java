@@ -8,7 +8,7 @@ import filters.PostPopulatingArticleFilter;
 import articles.Article;
 import articles.DailyMailArticle;
 
-public class DailyMailScraper extends Scraper {
+public class DailyMailScraper extends PredictiveScraper {
 
 	public DailyMailScraper() {
 		this.baseURL = "http://www.dailymail.co.uk/home/search.html?sel=site&type=article";

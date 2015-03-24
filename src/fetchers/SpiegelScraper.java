@@ -7,7 +7,7 @@ import java.util.Map;
 import articles.Article;
 import articles.SpiegelArticle;
 
-public class SpiegelScraper extends Scraper {
+public class SpiegelScraper extends PredictiveScraper {
 
 	public SpiegelScraper() {
 		this.baseURL = "http://www.spiegel.de/suche/index.html?quellenGroup=SP";
@@ -71,7 +71,7 @@ public class SpiegelScraper extends Scraper {
 	 * loop is not aborted (Spiegel search does not reliably return 20 results
 	 * per page).
 	 * 
-	 * @see Scraper#lessArticlesThanExpectedHook(int, int, String)
+	 * @see PredictiveScraper#lessArticlesThanExpectedHook(int, int, String)
 	 */
 	@Override
 	protected boolean lessArticlesThanExpectedHook(int expectedArticles, int actualArticles,

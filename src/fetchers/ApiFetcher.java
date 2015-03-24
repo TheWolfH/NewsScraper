@@ -150,4 +150,32 @@ public abstract class ApiFetcher extends Fetcher {
 		// Process articles by filtering and populating, then return
 		return this.processArticles(articles, fromDate, toDate);
 	}
+	
+	/**
+	 * Helper method used by {@link #searchArticles(String[], Date, Date)} to
+	 * search for articles matching the given conditions. More specifically, it
+	 * returns the http(s) query address that needs to be called to obtain at
+	 * least the url and the title of the articles number {@code offset} to
+	 * {@code offset+limit} (in a zero-based counting) which contain the
+	 * {@code keyword} and were published between {@code fromDate} and
+	 * {@code toDate}.
+	 * 
+	 * @param keyword
+	 *            the keyword to search for
+	 * @param fromDate
+	 *            the earliest date an article may have been published on to be
+	 *            found by the returned query
+	 * @param toDate
+	 *            the latest date an article may have been published on to be
+	 *            found by the returned query
+	 * @param offset
+	 *            the number of the first article to be found by the returned
+	 *            query
+	 * @param limit
+	 *            the number of articles to be returned by the returned query
+	 * @return the http(s) query address that will return the articles as per
+	 *         the above mentioned conditions
+	 */
+	protected abstract String getSearchURL(String keyword, Date fromDate, Date toDate, int offset,
+			int limit);
 }

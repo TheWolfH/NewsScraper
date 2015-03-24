@@ -6,7 +6,7 @@ import java.util.Map;
 import articles.Article;
 import articles.SternArticle;
 
-public class SternScraper extends Scraper {
+public class SternScraper extends PredictiveScraper {
 
 	public SternScraper() {
 		this.baseURL = "http://wefind.stern.de/suche?extendedSearch=on";

@@ -9,7 +9,7 @@ import filters.URLSuffixFilter;
 import articles.Article;
 import articles.MirrorArticle;
 
-public class MirrorScraper extends Scraper {
+public class MirrorScraper extends PredictiveScraper {
 
 	public MirrorScraper() {
 		this.baseURL = "http://www.mirror.co.uk/search/advanced.do?destinationSectionId=219&publicationName=mirror";
