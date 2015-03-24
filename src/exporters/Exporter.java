@@ -139,8 +139,6 @@ public class Exporter {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("Wait for five seconds...");
-		
 		try {
 			Thread.sleep(5000);
 		}
