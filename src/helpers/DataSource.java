@@ -12,7 +12,6 @@ public enum DataSource {
 	STERN("Stern", new SternScraper()),
 	MIRROR("Mirror", new MirrorScraper()),
 	DAILYMAIL("Daily Mail Online", new DailyMailScraper()),
-	WELTONLINE("Die Welt Online", new WeltOnlineScraper())
 	/*WELTONLINE("Die Welt Online", new WeltOnlineScraper())*/;
 	
 	private String name;
