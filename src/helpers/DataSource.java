@@ -12,7 +12,9 @@ public enum DataSource {
 	STERN("Stern", new SternScraper()),
 	MIRROR("Mirror", new MirrorScraper()),
 	DAILYMAIL("Daily Mail Online", new DailyMailScraper()),
-	DAILYEXPRESS("Daily Express", new DailyExpressScraper())
+	DAILYEXPRESS("Daily Express", new DailyExpressScraper()),
+	SUEDDEUTSCHE("Süddeutsche Zeitung", new SueddeutscheScraper()),
+	FRANKFURTERALLGEMEINE("Frankfurter Allgemeine", new FrankfurterAllgemeineScraper())
 	/*WELTONLINE("Die Welt Online", new WeltOnlineScraper())*/;
 	
 	private String name;
