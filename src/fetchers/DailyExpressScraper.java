@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.jsoup.nodes.Document;
 
+import filters.PostPopulatingArticleFilter;
+import filters.PublicationDateFilter;
 import articles.Article;
 import articles.DailyExpressArticle;
 
@@ -100,6 +102,13 @@ public class DailyExpressScraper extends ReactiveScraper {
 	@Override
 	public Map<String, Article> searchArticles(String[] keywords, Date fromDate, Date toDate) {
 		return super.searchArticles(keywords, fromDate, toDate, 10);
+	}
+
+	// As the Daily Mail search functionality does not allow specifying a date
+	// range, apply date filter after populating the articles
+	@Override
+	protected PostPopulatingArticleFilter getPostPopulatingArticleFilter(Date fromDate, Date toDate) {
+		return new PublicationDateFilter(false, fromDate, toDate);
 	}
 
 }
