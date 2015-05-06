@@ -177,11 +177,11 @@ public abstract class ReactiveScraper extends Scraper {
 		}
 
 		Element element = doc.select(this.getNextPageSelector()).first();
-		
+
 		if (element == null) {
 			return null;
 		}
-		
+
 		return element.attr("abs:href");
 	}
 
@@ -201,9 +201,6 @@ public abstract class ReactiveScraper extends Scraper {
 	 * @param toDate
 	 *            the latest date an article may have been published on to be
 	 *            found by the returned query
-	 * @param offset
-	 *            the number of the first article to be found by the returned
-	 *            query
 	 * @param limit
 	 *            the number of articles to be returned by the returned query
 	 * @return the http(s) query address that will return the articles as per
@@ -232,7 +229,8 @@ public abstract class ReactiveScraper extends Scraper {
 	 * 
 	 * an appropriate selector would be {@code div.pagination span.page.next a}.
 	 * 
-	 * @return
+	 * @return the selector used to identify the link pointing to the next page
+	 *         of the search result pagination
 	 */
 	protected abstract String getNextPageSelector();
 

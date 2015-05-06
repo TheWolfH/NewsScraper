@@ -36,7 +36,7 @@ public abstract class ApiFetcher extends Fetcher {
 	 * The API key needed to access the respective API. Should be set in the
 	 * constructor of the respective subclass and should be part of
 	 * {@link Fetcher#baseURL}, which is used by
-	 * {@link Fetcher#getSearchURL(String, Date, Date, int, int)} to build the
+	 * {@link #getSearchURL(String, Date, Date, int, int)} to build the
 	 * search url.
 	 */
 	protected String apiKey;

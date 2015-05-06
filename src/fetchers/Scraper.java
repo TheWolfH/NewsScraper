@@ -37,7 +37,7 @@ public abstract class Scraper extends Fetcher {
 	
 	/**
 	 * Factory method called by
-	 * {@link #searchArticles(String[], Date, Date, int)} to create an object of
+	 * {@link #searchArticles(String[], Date, Date)} to create an object of
 	 * a subclass of {@link articles.Article}. Must be implemented by subclasses
 	 * by returning an object of the respective XYZArticle class with the passed
 	 * {@code url} and {@code title}.
@@ -52,7 +52,7 @@ public abstract class Scraper extends Fetcher {
 
 	/**
 	 * Factory method called by
-	 * {@link #searchArticles(String[], Date, Date, int)} to create an object of
+	 * {@link #searchArticles(String[], Date, Date)} to create an object of
 	 * a subclass of {@link articles.Article}. Must be implemented by subclasses
 	 * by returning an object of the respective XYZArticle class with the passed
 	 * {@code url}, {@code title} and {@code keyword}.
@@ -69,7 +69,7 @@ public abstract class Scraper extends Fetcher {
 	
 	/**
 	 * Template method called by
-	 * {@link #searchArticles(String[], Date, Date, int)} to extract the url
+	 * {@link #searchArticles(String[], Date, Date)} to extract the url
 	 * from an {@link org.jsoup.nodes.Element} containing information about one
 	 * search result displayed on the news site's search page. The default
 	 * implementation returns the absolute url contained in the {@code href}
@@ -88,7 +88,7 @@ public abstract class Scraper extends Fetcher {
 
 	/**
 	 * Template method called by
-	 * {@link #searchArticles(String[], Date, Date, int)} to extract the title
+	 * {@link #searchArticles(String[], Date, Date)} to extract the title
 	 * from an {@link org.jsoup.nodes.Element} containing information about one
 	 * search result displayed on the news site's search page. The default
 	 * implementation returns the text content of all elements matched by the
@@ -106,7 +106,7 @@ public abstract class Scraper extends Fetcher {
 	
 	/**
 	 * Returns the selector used by
-	 * {@link #searchArticles(String[], Date, Date, int)} to identify the HTML
+	 * {@link #searchArticles(String[], Date, Date)} to identify the HTML
 	 * elements that hold a single search result (e.g., a single article) on a
 	 * page containing multiple such results. For example, if the results were
 	 * displayed in an unordered list as such
@@ -130,7 +130,7 @@ public abstract class Scraper extends Fetcher {
 
 	/**
 	 * Returns the selector used by
-	 * {@link #searchArticles(String[], Date, Date, int)} to identify the HTML
+	 * {@link #searchArticles(String[], Date, Date)} to identify the HTML
 	 * element whose {@code href} attribute holds the article url. For example,
 	 * if a single article within the search results was displayed as such
 	 * 
@@ -154,7 +154,7 @@ public abstract class Scraper extends Fetcher {
 
 	/**
 	 * Returns the selector used by
-	 * {@link #searchArticles(String[], Date, Date, int)} to identify the HTML
+	 * {@link #searchArticles(String[], Date, Date)} to identify the HTML
 	 * element(s) whose text is the article title. For example, if a single
 	 * article within the search results was displayed as such
 	 * 

@@ -39,13 +39,12 @@ import articles.Article;
  */
 public abstract class Fetcher {
 	/**
-	 * The constant part of the url leading to the search functionality on the
-	 * website of the news provider. Must be set in the constructor of the
-	 * respective subclass and should contain all constant parts of the url,
+	 * The constant part of the URL leading to the search functionality on the
+	 * web site of the news provider. Must be set in the constructor of the
+	 * respective subclass and should contain all constant parts of the URL,
 	 * including the protocol, hostname, path, and all constant query parts
 	 * (e.g. ordering, filters in order to search for only one publication of
-	 * this publisher etc.). {@link #getSearchURL(String, Date, Date, int, int)}
-	 * should use this property as the basis for the complete search url.
+	 * this publisher etc.).
 	 */
 	protected String baseURL;
 

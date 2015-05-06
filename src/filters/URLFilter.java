@@ -7,10 +7,9 @@ import java.util.stream.Collectors;
 
 /**
  * A PrePopulatingArticleFilter implementation used to filter out articles based
- * on the their URL. If the URL of the article starts matches one of the Regular
- * Expressions passed when constructing the filter (as determined by
- * {@link String#startsWith(String)}), the filter returns {@code false} so that
- * the calling method will exclude this article.
+ * on the their URL. If the URL of the article matches one of the Regular
+ * Expressions passed when constructing the filter, the filter returns
+ * {@code false} so that the calling method will exclude this article.
  * 
  * @author Jan Helge Wolf
  *

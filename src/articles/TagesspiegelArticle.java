@@ -6,16 +6,10 @@ public class TagesspiegelArticle extends ScrapedArticle {
 
 	public TagesspiegelArticle(String url, String title) {
 		super(url, title);
-		if(url.length()<50) {
-			System.out.println(url);
-		}
 	}
 
 	public TagesspiegelArticle(String url, String title, String keyword) {
 		super(url, title, keyword);
-		if(url.length()<50) {
-			System.out.println(url);
-		}
 	}
 
 	@Override
