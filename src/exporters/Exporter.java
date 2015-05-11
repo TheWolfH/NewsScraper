@@ -1,9 +1,8 @@
 package exporters;
 
-import gui.Wrapper;
-import helpers.ConfigReader;
-import helpers.DataSource;
-import helpers.LoggerGenerator;
+import framework.articles.Article;
+import framework.helpers.ConfigReader;
+import framework.helpers.LoggerGenerator;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -19,7 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import articles.Article;
+import application.helpers.DataSource;
+import application.wrappers.Wrapper;
 
 public class Exporter {
 	protected Connection con;
@@ -138,15 +138,7 @@ public class Exporter {
 		}
 	}
 
-	public static void main(String[] args) {
-		try {
-			Thread.sleep(5000);
-		}
-		catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
+	public static void main(String[] args) {		
 		if (args.length < 3) {
 			throw new IllegalArgumentException(
 					"At least three arguments (fromDate, toDate, keywords...) expected");
@@ -181,7 +173,7 @@ public class Exporter {
 		else {
 			List<DataSource> sources = new ArrayList<DataSource>();
 
-			for (String usedDataSource : usedDataSources.split(",\\s+")) {
+			for (String usedDataSource : usedDataSources.split(",\\s*")) {
 				DataSource source = DataSource.valueOf(usedDataSource);
 				sources.add(source);
 			}
