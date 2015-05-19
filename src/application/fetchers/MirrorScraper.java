@@ -28,7 +28,7 @@ public class MirrorScraper extends PredictiveScraper {
 
 	@Override
 	protected String getSearchResultsSelector() {
-		return "div.search-results div.article";
+		return "div.search-results div.article:not(.no-results)";
 	}
 
 	@Override

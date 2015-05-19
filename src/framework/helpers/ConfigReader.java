@@ -5,6 +5,12 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+/**
+ * Helper class to read properties from NewsScraper.properties file.
+ * 
+ * @author Jan Helge Wolf
+ *
+ */
 public class ConfigReader {
 	public final static String FILENAME = "NewsScraper.properties";
 	private static Properties props;

@@ -68,14 +68,12 @@ public abstract class Fetcher {
 		ExecutorService fullTextFetcher = Executors.newFixedThreadPool(numThreads);
 		Set<Future<Void>> futures = new HashSet<Future<Void>>();
 
-		// Iterate over all articles found and asynchronously populate
-		// fullText
+		// Iterate over all articles found and asynchronously populate fullText
 		// fields
 		for (final Article article : articles.values()) {
 			Future<Void> future = fullTextFetcher.submit(new Callable<Void>() {
 				@Override
 				public Void call() throws Exception {
-					// TODO Auto-generated method stub
 					article.populateData();
 					return null;
 				}
@@ -91,23 +89,21 @@ public abstract class Fetcher {
 			}
 			catch (ExecutionException e) {
 				// Exception thrown by article.populateData()
-				// TODO add error logging
 				this.log.warning("Exception thrown when trying to populate article data: "
 						+ e.getCause().toString());
 			}
 			catch (InterruptedException e) {
 				// Exception due to interruption
-				// TODO add generic exception?
 				e.printStackTrace();
 			}
 		}
 
+		// Wait for all tasks to be finished
 		try {
 			fullTextFetcher.shutdown();
 			fullTextFetcher.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 		}
 		catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -257,6 +253,22 @@ public abstract class Fetcher {
 	 */
 	protected PostPopulatingArticleFilter getPostPopulatingArticleFilter(Date fromDate, Date toDate) {
 		return null;
+	}
+
+	/**
+	 * Transforms the passed keyword such that in can be passed to the
+	 * respective news site search function. Especially, it ensures that queries
+	 * that consist of multiple words (such as "Star Wars") are encoded in a way
+	 * that the respective search functionality only returns articles containing
+	 * all words in the query. By default, this method simply returns the passed
+	 * string without modifying it.
+	 * 
+	 * @param keyword
+	 *            the keyword to process
+	 * @return the processed keyword
+	 */
+	protected String processKeyword(String keyword) {
+		return keyword;
 	}
 
 	/**

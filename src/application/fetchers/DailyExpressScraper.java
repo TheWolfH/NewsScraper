@@ -99,6 +99,11 @@ public class DailyExpressScraper extends ReactiveScraper {
 	protected String getTitleSelector() {
 		return "h4.post-title";
 	}
+	
+	@Override
+	protected String processKeyword(String keyword) {
+		return keyword.trim().replaceAll("\\s+", " ");
+	}
 
 	@Override
 	public Map<String, Article> searchArticles(String[] keywords, Date fromDate, Date toDate) {

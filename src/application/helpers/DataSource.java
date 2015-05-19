@@ -2,7 +2,6 @@ package application.helpers;
 
 import application.fetchers.DailyExpressScraper;
 import application.fetchers.DailyMailScraper;
-import application.fetchers.FrankfurterAllgemeineScraper;
 import application.fetchers.GuardianFetcher;
 import application.fetchers.MirrorScraper;
 import application.fetchers.SpiegelOnlineScraper;
@@ -25,10 +24,8 @@ public enum DataSource {
 	MIRROR("Mirror", new MirrorScraper()),
 	DAILYMAIL("Daily Mail Online", new DailyMailScraper()),
 	DAILYEXPRESS("Daily Express", new DailyExpressScraper()),
-	SUEDDEUTSCHE("Süddeutsche Zeitung", new SueddeutscheScraper()),
-	FRANKFURTERALLGEMEINE("Frankfurter Allgemeine", new FrankfurterAllgemeineScraper())
-	/*WELTONLINE("Die Welt Online", new WeltOnlineScraper())*/;
-	
+	SUEDDEUTSCHE("Süddeutsche Zeitung", new SueddeutscheScraper());
+
 	private String name;
 	private Fetcher fetcher;
 	

@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
+import application.helpers.ApiKey;
 import application.results.GuardianResult;
 import framework.articles.Article;
 import framework.fetchers.ApiFetcher;
@@ -11,7 +12,7 @@ import framework.fetchers.ApiFetcher;
 public class GuardianFetcher extends ApiFetcher {
 
 	public GuardianFetcher() {
-		this.apiKey = application.helpers.ApiKey.GUARDIAN.getKey();
+		this.apiKey = ApiKey.GUARDIAN.getKey();
 		this.baseURL = "http://content.guardianapis.com/search?api-key=" + this.apiKey;
 	}
 
